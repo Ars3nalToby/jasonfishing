@@ -124,7 +124,7 @@ function updatePlayer(dt) {
     P.speed = Math.abs(B.v);
   } else {
     let f = (keys.KeyW || keys.ArrowUp ? 1 : 0) - (keys.KeyS || keys.ArrowDown ? 1 : 0) - input.joy.y;
-    let s = (keys.KeyD || keys.ArrowRight ? 1 : 0) - (keys.KeyA || keys.ArrowLeft ? 1 : 0) + input.joy.x;
+    let s = FISH.state === 'fight' ? 0 : (keys.KeyD || keys.ArrowRight ? 1 : 0) - (keys.KeyA || keys.ArrowLeft ? 1 : 0) + input.joy.x;
     const len = Math.hypot(f, s); if (len > 1) { f /= len; s /= len; }
     const wade = W.waterY - terrainH(P.x, P.z) > 0.2 && !P.deck;
     const sp = (keys.ShiftLeft || keys.ShiftRight ? 6.5 : 3.6) * (wade ? 0.45 : 1) * (FISH.state === 'fight' ? 0.25 : 1);
@@ -150,6 +150,8 @@ addEventListener('keydown', e => {
   if (e.code === 'KeyF' && !e.repeat) toggleRod();
   if (e.code === 'KeyE' && !e.repeat) interact();
   if (e.code === 'KeyM' && !e.repeat) toggleSound();
+  if (e.code === 'KeyB' && !e.repeat) cycleBait();
+  if (e.code === 'KeyT' && !e.repeat) openShop();
   if (e.code === 'Escape') closePanels();
 });
 addEventListener('keyup', e => { keys[e.code] = false; if (e.code === 'Space') actionUp(); });
@@ -178,6 +180,7 @@ addEventListener('pointerup', e => { if (drag && drag.id === e.pointerId) drag =
 
 function interact() {
   if (P.inBoat) { if (Math.abs(B.v) > 1.2) { toast('Slow down before stepping off.'); return; } leaveBoat(); return; }
+  if (nearShop()) { openShop(); return; }
   if (nearBoat()) { if (FISH.state !== 'idle' && FISH.state !== 'ready') { toast('Reel in first.'); return; } boardBoat(); return; }
   openHire();
 }

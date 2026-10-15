@@ -2,7 +2,10 @@
 
 A first-person 3D fishing game set on four south-east Queensland spots: Shorncliffe Pier, Woody Point Jetty, The Spit Seaway and Mooloolaba Spit.
 
-- Walk the pier, cast a float, strike on the bite and fight the fish with a line-tension meter.
+- Start at the end of the pier with the rod out. Watch the fish swim up to your float, strike on the bite (early strike = perfect hook set), and fight it in the tension meter's green zone.
+- Species fight differently: tailor and mahi-mahi jump (ease off), kingfish and jacks run for the pylons (steer them away), flathead and rays dig in.
+- Rarity tiers, 1–3 star sizes, NEW species and PB banners, and one fictional legend fish per spot at dawn, dusk or night on a moving tide.
+- Angler levels, coins, a bait & tackle shop (bait changes which fish bite) and three daily quests.
 - 21 catchable species plus reef fish to spot, drawn with the procedural fish engine from SEQ Aquarium.
 - Every catch is checked against Queensland tidal size and possession limits (checked 15 Oct 2026).
 - Live wind, waves, air temperature, cloud and tide from Open-Meteo, with a simulated fallback.

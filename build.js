@@ -1,7 +1,7 @@
 const fs = require('fs'), path = require('path');
 const S = path.join(__dirname, 'src');
 const head = fs.readFileSync(path.join(S, '00_head.html'), 'utf8');
-const js = fs.readdirSync(S).filter(f => /^\d\d_.*\.js$/.test(f)).sort().map(f => '/* ---- ' + f + ' ---- */\n' + fs.readFileSync(path.join(S, f), 'utf8')).join('\n');
+const js = fs.readdirSync(S).filter(f => /^\d\d[a-z]?_.*\.js$/.test(f)).sort().map(f => '/* ---- ' + f + ' ---- */\n' + fs.readFileSync(path.join(S, f), 'utf8')).join('\n');
 const body = head + '\n<script>\n(function () {\n' + js + '\n})();\n</script>\n';
 fs.mkdirSync(path.join(__dirname, 'dist'), { recursive: true });
 fs.writeFileSync(path.join(__dirname, 'dist', 'artifact.html'), body);

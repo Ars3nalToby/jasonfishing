@@ -107,7 +107,7 @@ body.catching #cross { display: none; }
   .scorebox { top: auto; bottom: calc(var(--gb) + 128px); }
   #flash { font-size: 44px; }
 }
-@media (max-width: 640px) and (pointer: coarse) { .tools { bottom: auto; top: calc(var(--gt) + 140px); } .scorebox { top: calc(var(--gt) + 140px); bottom: auto; right: auto; left: var(--gl); } #hint { top: auto; bottom: calc(var(--gb) + 236px); } #toasts { top: calc(var(--gt) + 190px); } }
+
 
 /* panels */
 .panel { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: var(--gt) var(--gr) var(--gb) var(--gl); background: rgba(4, 14, 20, 0.45); }
@@ -182,6 +182,93 @@ body.catching #cross { display: none; }
 #loader .bar i { display: block; height: 100%; width: 0; background: var(--float); transition: width .2s; }
 #fallback { position: fixed; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; color: var(--muted); }
 @media (prefers-reduced-motion: reduce) { #flash.go { animation-duration: .01s; } .meter.danger, #bAct.hot { animation: none; } .spot { transition: none; } }
+/* progression HUD */
+.scorebox { align-items: center; }
+.lv { position: relative; padding-bottom: 5px; }
+#xpbar { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; border-radius: 2px; background: rgba(255,255,255,.15); overflow: hidden; }
+#xpbar::after { content: ''; position: absolute; inset: 0; width: calc(var(--v, 0) * 100%); background: var(--buoy); }
+.chipbtn { position: absolute; right: var(--gr); top: calc(var(--gt) + 98px); appearance: none; border: 1px solid var(--line); background: var(--glass); color: var(--ink); font: 600 12px var(--body); padding: 7px 11px; border-radius: 10px; cursor: pointer; backdrop-filter: blur(10px); }
+.chipbtn i, #cond i { font-style: normal; }
+.chipbtn i { font: 600 10px var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0 4px 0 8px; }
+.chipbtn i:first-child { margin-left: 0; }
+#quests { position: absolute; right: var(--gr); top: calc(var(--gt) + 140px); width: 250px; background: var(--glass); border: 1px solid var(--line); border-radius: 12px; backdrop-filter: blur(10px); overflow: hidden; }
+#quests .qh { width: 100%; display: flex; justify-content: space-between; appearance: none; border: 0; background: transparent; color: var(--ink); font: 700 12px var(--body); letter-spacing: .08em; text-transform: uppercase; padding: 9px 12px; cursor: pointer; }
+#quests .qh b { color: var(--buoy); }
+#quests ol { margin: 0; padding: 0 12px 10px; list-style: none; display: grid; gap: 6px; }
+#quests.min ol { display: none; }
+#quests li { display: flex; flex-direction: column; gap: 1px; font: 500 12px/1.3 var(--body); }
+#quests li i { font: 500 11px var(--mono); font-style: normal; color: var(--muted); }
+#quests li.done span { text-decoration: line-through; color: var(--muted); } #quests li.done i { color: var(--ok); }
+body.coaching #hint { display: none; }
+body.moving #coach, body.fighting #bUse { display: none; }
+@media (min-width: 700px) { body.catching #toasts { left: calc(50% + 120px); } }
+#coach { position: absolute; left: 50%; bottom: calc(var(--gb) + 96px); transform: translateX(-50%); max-width: min(440px, calc(100vw - 32px)); padding: 12px 16px; border-radius: 12px; background: var(--sign); border: 1px solid rgba(255,255,255,.25); font: 600 15px/1.4 var(--body); text-align: center; pointer-events: none; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+#coach i { display: block; font: 700 11px var(--body); font-style: normal; letter-spacing: .14em; color: var(--buoy); margin-bottom: 3px; }
+body.catching #coach { display: none; }
+/* fight prompts */
+.move { position: absolute; left: 50%; top: 24%; transform: translateX(-50%); text-align: center; pointer-events: none; text-shadow: 0 2px 14px rgba(0,0,0,.6); }
+.move b { display: block; font: 800 46px/1 var(--display); letter-spacing: .04em; text-transform: uppercase; }
+.move span { display: block; margin-top: 4px; font: 700 16px var(--body); }
+.m-jump b { color: var(--buoy); animation: pulse .25s infinite alternate; }
+.m-structure b { color: var(--float); } .m-dig b { color: #9fd8ff; }
+.sbar { display: block; width: 220px; height: 8px; margin: 10px auto 0; border-radius: 4px; background: rgba(0,0,0,.45); overflow: hidden; }
+.sbar u { display: block; height: 100%; width: 0; background: var(--ok); }
+#steer { position: absolute; left: 50%; top: 40%; transform: translateX(-50%); display: flex; gap: 90px; }
+#steer .btn { min-width: 96px; min-height: 64px; font: 800 16px var(--display); letter-spacing: .06em; text-transform: uppercase; background: var(--sign); touch-action: none; }
+.meter { height: 16px; }
+.meter.tension { background: linear-gradient(90deg, rgba(0,0,0,.45) 0 42%, rgba(87,214,141,.35) 42% 78%, rgba(255,107,90,.35) 78% 100%); }
+.meter.tension::before { width: 4px; left: calc(var(--v) * 100% - 2px); background: #fff; box-shadow: 0 0 10px #fff; border-radius: 2px; top: -4px; bottom: -4px; }
+.meter.tension.zone { border-color: var(--ok); box-shadow: 0 0 18px rgba(87,214,141,.6); }
+.meter.tension i { display: block; left: 0; top: auto; bottom: -9px; height: 4px; width: calc(var(--s, 1) * 100%); background: var(--buoy); border-radius: 2px; }
+.meter.power i { display: none; }
+/* catch banner + card tags */
+.banner { position: fixed; z-index: 36; left: 50%; top: 16%; transform: translateX(-50%); text-align: center; pointer-events: none; padding: 14px 28px 12px; border-radius: 14px; background: rgba(8,24,32,.82); border: 2px solid var(--rc, var(--line)); min-width: min(380px, calc(100vw - 32px)); }
+.banner.go { animation: bn 2.6s cubic-bezier(.2,1.4,.4,1) both; }
+@keyframes bn { 0% { opacity: 0; transform: translateX(-50%) scale(.6); } 12% { opacity: 1; transform: translateX(-50%) scale(1.05); } 20% { transform: translateX(-50%) scale(1); } 85% { opacity: 1; } 100% { opacity: 0; transform: translateX(-50%) translateY(-12px); } }
+.bk { font: 800 14px var(--body); letter-spacing: .24em; color: var(--rc, var(--buoy)); }
+.bn { font: 800 42px/1.05 var(--display); text-transform: uppercase; margin: 4px 0; }
+.bs { font: 700 18px var(--display); color: var(--buoy); letter-spacing: .1em; } .bs i, .stars i { color: rgba(255,255,255,.2); font-style: normal; }
+.r-common { --rc: #c7d3d6; } .r-uncommon { --rc: #57d68d; } .r-rare { --rc: #5fc8ff; } .r-epic { --rc: #c48bff; } .r-legendary { --rc: #ffb547; }
+.banner.r-legendary { box-shadow: 0 0 60px rgba(255,181,71,.5); }
+.tagrow { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+.rar { font: 800 11px var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--rc); border: 1px solid var(--rc); padding: 2px 8px; border-radius: 999px; }
+.stars { font: 700 16px var(--display); color: var(--buoy); letter-spacing: .08em; }
+.legend { font: 800 13px var(--body); letter-spacing: .12em; text-transform: uppercase; color: #ffb547; margin-top: 6px; }
+#confetti { position: fixed; inset: 0; pointer-events: none; z-index: 37; overflow: hidden; }
+#confetti i { position: absolute; top: -12px; width: 8px; height: 12px; border-radius: 2px; animation: cf 2.2s ease-in forwards; }
+@keyframes cf { to { transform: translate(var(--dx), 105vh) rotate(var(--r)); opacity: .9; } }
+/* shop */
+#shop h3 { margin: 16px 0 8px; font: 800 13px var(--body); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.shop { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 640px) { .shop { grid-template-columns: 1fr 1fr; } }
+.sc { border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.sc.eq { border-color: var(--buoy); background: rgba(255,210,58,.06); }
+.sc b { font: 700 18px var(--display); } .sc p { margin: 0; font: 400 12px/1.4 var(--body); color: #d5e3e5; } .sc small { font: 500 11px var(--body); color: var(--muted); }
+.sc .btn { margin-top: auto; }
+@media (max-width: 640px) {
+  .chipbtn { top: auto; bottom: calc(var(--gb) + 196px); }
+  #quests { top: auto; bottom: calc(var(--gb) + 240px); width: 210px; }
+  .move b { font-size: 34px; } .bn { font-size: 32px; }
+}
+#bMenu { display: none; }
+@media (max-width: 640px) {
+  #bMenu { display: block; position: absolute; right: var(--gr); top: calc(var(--gt) + 124px); }
+  .scorebox { top: calc(var(--gt) + 124px); bottom: auto; right: auto; left: var(--gl); padding: 6px 10px; gap: 10px; }
+  .scorebox b { font-size: 16px; }
+  #cond span:nth-child(5), #cond span:nth-child(6) { display: none; }
+  #src { font-size: 10px; }
+  .tools, .chipbtn, #quests { display: none; }
+  body.menu-open .tools { display: flex; position: absolute; top: calc(var(--gt) + 172px); bottom: auto; right: var(--gr); left: auto; flex-direction: column; align-items: stretch; width: 170px; }
+  body.menu-open .chipbtn { display: block; position: absolute; top: calc(var(--gt) + 172px); bottom: auto; left: var(--gl); right: auto; }
+  body.menu-open #quests { display: block; position: absolute; top: calc(var(--gt) + 214px); bottom: auto; left: var(--gl); right: auto; width: calc(100vw - 32px - 186px); min-width: 0; }
+  body.menu-open #quests ol { display: grid; }
+  #toasts { top: calc(var(--gt) + 172px); }
+  #coach { bottom: auto; top: calc(var(--gt) + 172px); }
+  body.menu-open #coach { display: none; }
+  .move { top: 34%; width: calc(100vw - 32px); }
+}
+@media (pointer: coarse) { .meter { bottom: calc(var(--gb) + 150px); } #hint { bottom: calc(var(--gb) + 200px) !important; top: auto !important; } #steer { top: 48%; } }
+@media (prefers-reduced-motion: reduce) { .banner.go { animation-duration: .01s; animation-delay: 0s; } #confetti i { display: none; } .m-jump b { animation: none; } }
 </style>
 </head>
 <body>
@@ -193,14 +280,21 @@ body.catching #cross { display: none; }
     <div id="cond"></div>
     <div id="src"></div>
   </div>
+  <button class="btn" id="bMenu" aria-expanded="false">Menu</button>
   <div class="tools">
     <button class="btn" id="bSpots">Spots</button>
     <button class="btn primary" id="bHire">Boat hire</button>
+    <button class="btn" id="bShop">Tackle</button>
     <button class="btn" id="bDex">Fishdex</button>
     <button class="btn" id="bTime">Time: now</button>
     <button class="btn" id="bSound">Sound on</button>
   </div>
-  <div class="scorebox"><span>Score<b id="score">0</b></span><span>Esky<b id="esky">0</b></span></div>
+  <div class="scorebox"><span id="lvlbox" class="lv">Lv<b id="lvl">1</b><i id="xpbar"></i></span><span>Coins<b id="score">0</b></span><span>Esky<b id="esky">0</b></span></div>
+  <button class="chipbtn" id="baitChip" aria-label="Bait and rod, open tackle shop"></button>
+  <div id="quests"></div>
+  <div id="coach" hidden></div>
+  <div id="move" hidden></div>
+  <div id="steer" hidden><button class="btn" id="stL">◀ Steer</button><button class="btn" id="stR">Steer ▶</button></div>
   <div id="hint"></div>
   <div id="useTip" hidden>E · take the hire tinnie</div>
   <div class="meter" id="meter" hidden><i></i></div>
@@ -215,6 +309,8 @@ body.catching #cross { display: none; }
 <div id="toasts" aria-live="polite"></div>
 <div id="flash"></div>
 <div id="catch" hidden></div>
+<div id="banner" hidden></div>
+<div id="confetti" aria-hidden="true"></div>
 
 <div class="panel" id="start" hidden>
   <div class="card">
@@ -224,10 +320,11 @@ body.catching #cross { display: none; }
       <p>Walk a real SEQ pier, cast a float, and fight bream, flathead, tailor and mulloway. Weather, wind and tide are live where the network allows. Every fish is checked against Queensland size and possession limits before it goes in the esky.</p>
     </div>
     <div id="spots"></div>
-    <p class="foot">Desktop: click to look · WASD walk · hold click or Space to cast and reel · F rod · E boat. Phone: stick to walk, drag to look, big button to cast. Places are stylised, not surveyed. Boat hire prices are advertised rates checked 15 Oct 2026.</p>
+    <p class="foot">You start at the end of the pier with the rod out. Desktop: click to look · WASD walk · hold click or Space to cast and reel · A/D steer a running fish · B swap bait · T tackle shop · E boat. Phone: stick to walk, drag to look, big button to cast. Places are stylised, not surveyed. Boat hire prices are advertised rates checked 15 Oct 2026.</p>
   </div>
 </div>
 <div class="panel" id="hire" hidden><div class="card"><button class="btn x">Close</button><div class="eyebrow">Boat hire</div><h2>Get out past the pier</h2><div id="hireBody"></div></div></div>
+<div class="panel" id="shop" hidden><div class="card"><button class="btn x">Close</button><div class="eyebrow">Bait &amp; tackle</div><h2>Rig up</h2><div id="shopBody"></div></div></div>
 <div class="panel" id="dex" hidden><div class="card"><button class="btn x">Close</button><div class="eyebrow">Fishdex</div><h2>What you have found</h2><div id="dexBody"></div></div></div>
 <div id="loader"><div class="box"><h1>Saltline</h1><p id="lmsg">Loading…</p><div class="bar"><i id="lbar"></i></div></div></div>
 <div id="fallback" hidden>This game needs WebGL, which this browser has switched off.</div>
@@ -2028,6 +2125,55 @@ function kmBetween(a, b, c, d) {
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 
+/* ---------- progression data ---------- */
+/* Bait preferences: simplified from common SEQ angling practice, tuned for play. Unlisted species use 0.7. */
+const BAITS = [
+  { id: 'prawn', name: 'Prawn', cost: 0, blurb: 'The all-rounder. Bream love it, so do toadfish.', likes: { bream: 1.8, whiting: 1.3, flathead: 1.1, snapper: 1.2, toadfish: 1.8, jack: 1.1, trevally: 1.0, luderick: 0.5 } },
+  { id: 'weed', name: 'Green weed', cost: 40, blurb: 'Luderick specialist. Most other fish ignore it.', likes: { luderick: 5, mullet: 1.6, bream: 0.4, toadfish: 0.2, garfish: 0.8 } },
+  { id: 'worm', name: 'Beach worm', cost: 60, blurb: 'Whiting candy. Fish it on the sand flats.', likes: { whiting: 3.2, bream: 1.4, flathead: 0.8, tailor: 0.5, toadfish: 1.2 } },
+  { id: 'pilchard', name: 'Pilchard', cost: 90, blurb: 'Oily and smelly. Tailor, mackerel and big snapper.', likes: { tailor: 2.8, mackerel: 2.0, snapper: 1.6, mulloway: 1.4, flathead: 1.3, kingfish: 1.5, cobia: 1.5, trevally: 1.3, mahi: 1.4, whiting: 0.3, luderick: 0.2 } },
+  { id: 'squid', name: 'Squid strip', cost: 140, blurb: 'Tough bait that stays on. Snapper, mulloway, rays.', likes: { snapper: 2.3, mulloway: 1.9, cobia: 1.7, kingfish: 1.6, groper: 1.6, eagleray: 1.6, wobbegong: 1.4, shovelnose: 1.3, toadfish: 0.5 } },
+  { id: 'plastic', name: 'Soft plastic', cost: 220, blurb: 'A lure. Flathead, jacks and trevally hit it. Pests leave it alone.', likes: { flathead: 2.8, jack: 2.4, trevally: 2.0, mulloway: 1.4, kingfish: 1.5, tailor: 1.3, bream: 1.0, whiting: 0.3, toadfish: 0.15, mullet: 0.1, garfish: 0.2, luderick: 0.1, shovelnose: 0.3, eagleray: 0.3 } }
+];
+/* Rods: line = how much pull the line takes before it snaps, reel = winding speed */
+const RODS = [
+  { id: 'light', name: '2–4 kg bream rod', line: 1.0, reel: 1.0, cost: 0, lvl: 1, blurb: 'Light and fun. Big fish will test it.' },
+  { id: 'medium', name: '4–8 kg spin rod', line: 1.35, reel: 1.15, cost: 450, lvl: 3, blurb: 'Handles tailor, snapper and small jewies.' },
+  { id: 'heavy', name: '10–15 kg boat rod', line: 1.8, reel: 1.3, cost: 1400, lvl: 6, blurb: 'For kingfish, cobia and the legends.' }
+];
+/* Fight moves per species: jump = leaps clear of the water, structure = runs for the pylons/reef, dig = heavy bottom slog */
+const MOVES = {
+  tailor: ['jump'], mahi: ['jump'], garfish: ['jump'], mullet: ['jump'], mackerel: ['jump'], cobia: ['dig'],
+  kingfish: ['structure'], jack: ['structure'], groper: ['structure', 'dig'], trevally: ['structure'], snapper: ['structure', 'dig'],
+  flathead: ['dig'], mulloway: ['dig', 'structure'], eagleray: ['dig'], shovelnose: ['dig'], wobbegong: ['dig'], greynurse: ['dig'],
+  bream: ['structure'], luderick: ['structure'], whiting: [], toadfish: []
+};
+/* One legend per spot (fictional names for the game, real species). Bite at dawn, dusk or night on a moving tide. */
+const LEGENDS = {
+  shorncliffe: { id: 'mulloway', name: 'The Bramble Bay Ghost', cm: [128, 146] },
+  woodypoint: { id: 'snapper', name: 'Big Red of Woody Point', cm: [88, 102] },
+  spit: { id: 'trevally', name: 'The Seaway Bulldozer', cm: [96, 112] },
+  mooloolaba: { id: 'mahi', name: 'Point Cartwright Bull', cm: [128, 145] }
+};
+const RARITY = [
+  { id: 'common', name: 'Common', xp: 0 }, { id: 'uncommon', name: 'Uncommon', xp: 10 }, { id: 'rare', name: 'Rare', xp: 25 },
+  { id: 'epic', name: 'Epic', xp: 50 }, { id: 'legendary', name: 'Legendary', xp: 250 }
+];
+const QUEST_POOL = [
+  { k: 'count', n: 3, t: 'Land 3 fish', r: 80 },
+  { k: 'count', n: 5, t: 'Land 5 fish', r: 140 },
+  { k: 'species', n: 2, t: 'Catch 2 different species', r: 90 },
+  { k: 'stars', n: 2, t: 'Land a 2-star fish or better', r: 100 },
+  { k: 'release', n: 2, t: 'Release 2 undersize fish', r: 90 },
+  { k: 'boat', n: 1, t: 'Catch a fish from the tinnie', r: 120 },
+  { k: 'golden', n: 1, t: 'Catch a fish at dawn, dusk or night', r: 110 },
+  { k: 'cm', n: 45, t: 'Land a fish over 45 cm', r: 130 },
+  { k: 'rare', n: 1, t: 'Catch a Rare fish or better', r: 150 },
+  { k: 'perfect', n: 2, t: 'Get 2 perfect hook sets', r: 80 },
+  { k: 'jump', n: 1, t: 'Ease off through a jump without losing the fish', r: 90 },
+  { k: 'keep', n: 2, t: 'Keep 2 legal fish for the esky', r: 80 }
+];
+
 /* ---- 04_world.js ---- */
 /* ======================================================================
    WORLD: sky, sun, terrain, water, pier, rock walls, trees, horizon.
@@ -2423,7 +2569,10 @@ function buildPier() {
   [-1, 1].forEach(s => { const pl = new THREE.Mesh(new THREE.BoxGeometry(rl + 0.8, 0.06, rw / 2 / Math.cos(0.32) + 0.35), rm); pl.rotation.x = s * 0.32; pl.position.set(rx, h + 2.95, s * rw / 4); pl.castShadow = true; roof.add(pl); });
   // bench and fish-cleaning table with tap
   const bench = new THREE.Mesh(new THREE.BoxGeometry(2, 0.08, 0.45), woodMat); bench.position.set(rx - 1, h + 0.48, -rw / 2 + 0.6); roof.add(bench);
-  const table = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.9, 0.7), new THREE.MeshStandardMaterial({ color: 0xd8dcdc, roughness: 0.3, metalness: 0.7 })); table.position.set(rx + 1.4, h + 0.45, rw / 2 - 0.6); roof.add(table);
+  const steel = new THREE.MeshStandardMaterial({ color: 0xd8dcdc, roughness: 0.3, metalness: 0.7 });
+  const table = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.06, 0.7), steel); table.position.set(rx + 1.4, h + 0.9, rw / 2 - 0.6); roof.add(table);
+  [[-0.7, -0.28], [0.7, -0.28], [-0.7, 0.28], [0.7, 0.28]].forEach(([a, b]) => { const l = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.9, 6), steel); l.position.set(rx + 1.4 + a, h + 0.45, rw / 2 - 0.6 + b); roof.add(l); });
+  const sink = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.12, 0.4), new THREE.MeshStandardMaterial({ color: 0x9aa2a5, roughness: 0.2, metalness: 0.9 })); sink.position.set(rx + 1.75, h + 0.88, rw / 2 - 0.6); roof.add(sink);
   const tap = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.025, 6, 12, Math.PI), metalMat); tap.position.set(rx + 1.4, h + 1.05, rw / 2 - 0.35); roof.add(tap);
   props.add(roof);
   // rules sign at the entry
@@ -2696,7 +2845,7 @@ function updatePlayer(dt) {
     P.speed = Math.abs(B.v);
   } else {
     let f = (keys.KeyW || keys.ArrowUp ? 1 : 0) - (keys.KeyS || keys.ArrowDown ? 1 : 0) - input.joy.y;
-    let s = (keys.KeyD || keys.ArrowRight ? 1 : 0) - (keys.KeyA || keys.ArrowLeft ? 1 : 0) + input.joy.x;
+    let s = FISH.state === 'fight' ? 0 : (keys.KeyD || keys.ArrowRight ? 1 : 0) - (keys.KeyA || keys.ArrowLeft ? 1 : 0) + input.joy.x;
     const len = Math.hypot(f, s); if (len > 1) { f /= len; s /= len; }
     const wade = W.waterY - terrainH(P.x, P.z) > 0.2 && !P.deck;
     const sp = (keys.ShiftLeft || keys.ShiftRight ? 6.5 : 3.6) * (wade ? 0.45 : 1) * (FISH.state === 'fight' ? 0.25 : 1);
@@ -2722,6 +2871,8 @@ addEventListener('keydown', e => {
   if (e.code === 'KeyF' && !e.repeat) toggleRod();
   if (e.code === 'KeyE' && !e.repeat) interact();
   if (e.code === 'KeyM' && !e.repeat) toggleSound();
+  if (e.code === 'KeyB' && !e.repeat) cycleBait();
+  if (e.code === 'KeyT' && !e.repeat) openShop();
   if (e.code === 'Escape') closePanels();
 });
 addEventListener('keyup', e => { keys[e.code] = false; if (e.code === 'Space') actionUp(); });
@@ -2750,6 +2901,7 @@ addEventListener('pointerup', e => { if (drag && drag.id === e.pointerId) drag =
 
 function interact() {
   if (P.inBoat) { if (Math.abs(B.v) > 1.2) { toast('Slow down before stepping off.'); return; } leaveBoat(); return; }
+  if (nearShop()) { openShop(); return; }
   if (nearBoat()) { if (FISH.state !== 'idle' && FISH.state !== 'ready') { toast('Reel in first.'); return; } boardBoat(); return; }
   openHire();
 }
@@ -2867,14 +3019,25 @@ function updateSeen(dt) {
   });
 }
 
+
+/* ---- 06b_fight.js ---- */
+/* ======================================================================
+   BITE + FIGHT + CATCH
+   approach (you see the fish come in) -> nibble -> bite (timed strike) ->
+   fight (tension sweet spot + species moves) -> landing moment -> card
+   ====================================================================== */
+const TSC = { scale: 1, slowT: 0 };   // global time scale for slow-motion moments
+
 /* ---------- bite odds ---------- */
+function goldenHour() { const e = Math.asin(W.sun.y) * 180 / Math.PI; return e < 12; }
 function biteFactor() {
   const e = Math.asin(W.sun.y) * 180 / Math.PI;
   const tod = e < -6 ? 1.15 : e < 12 ? 1.6 : e > 50 ? 0.8 : 1.0;
   const tide = LIVE.tideRate !== null ? (Math.abs(LIVE.tideRate) > 0.12 ? 1.35 : 0.8) : 1;
   return tod * tide * (1 + W.cloud * 0.15);
 }
-function pickSpecies(depth) {
+function baitLike(id) { const b = curBait(); return b.likes[id] !== undefined ? b.likes[id] : 0.7; }
+function speciesWeights(depth) {
   const tbl = [];
   for (const id in S.bites) {
     const g = GAME[id]; let w = S.bites[id];
@@ -2882,19 +3045,34 @@ function pickSpecies(depth) {
     if (g.zone === 'deep') w *= depth >= 3 ? 1.4 : 0.12;
     if (g.zone === 'boat') w *= P.inBoat && depth > 5 ? 6 : depth > 5 ? 0.25 : 0.03;
     if (P.inBoat && depth > 7 && g.zone === 'shallow') w *= 0.2;
-    tbl.push([id, w]);
+    tbl.push([id, w * baitLike(id)]);
   }
-  let tot = tbl.reduce((a, b) => a + b[1], 0), r = Math.random() * tot;
-  for (const [id, w] of tbl) { r -= w; if (r <= 0) return id; }
-  return tbl[0][0];
+  return tbl;
 }
+var pickBite = function (depth) {
+  const L = LEGENDS[S.id];
+  const legendOdds = (goldenHour() ? 0.035 : 0.004) * (LIVE.tideRate !== null && Math.abs(LIVE.tideRate) > 0.12 ? 1.6 : 1) * (depth > 4 ? 1 : 0.2) * baitLike(L.id) * (P.inBoat ? 1.4 : 1);
+  if (Math.random() < legendOdds) return { id: L.id, cm: Math.round(L.cm[0] + Math.random() * (L.cm[1] - L.cm[0])), legend: L.name };
+  const tbl = speciesWeights(depth);
+  let tot = tbl.reduce((a, b) => a + b[1], 0), r = Math.random() * tot, id = tbl[0][0];
+  for (const [k, w] of tbl) { r -= w; if (r <= 0) { id = k; break; } }
+  const g = GAME[id];
+  return { id, cm: Math.round(g.cm[0] + (g.cm[1] - g.cm[0]) * Math.pow(Math.random(), 1.7)) };
+};
+function rarityOf(id, legend) {
+  if (legend) return RARITY[4];
+  const tot = Object.values(S.bites).reduce((a, b) => a + b, 0), share = (S.bites[id] || 0.5) / tot * (GAME[id].zone === 'boat' ? 0.5 : 1);
+  return share >= 0.12 ? RARITY[0] : share >= 0.06 ? RARITY[1] : share >= 0.03 ? RARITY[2] : RARITY[3];
+}
+function starsOf(id, cm, legend) { if (legend) return 3; const g = GAME[id], f = (cm - g.cm[0]) / (g.cm[1] - g.cm[0]); return f >= 0.72 ? 3 : f >= 0.38 ? 2 : 1; }
 
 /* ---------- state machine ---------- */
 function toggleRod() {
-  if (FISH.state === 'idle') { FISH.state = 'ready'; rod.visible = true; hint(); sfx('click'); return; }
+  if (FISH.state === 'idle') { FISH.state = 'ready'; rod.visible = true; hint(); sfx('click'); tutorial('rod'); return; }
   if (FISH.state === 'ready' || FISH.state === 'waiting' || FISH.state === 'charging') { reelInNow(); FISH.state = 'idle'; rod.visible = false; hint(); }
 }
-function reelInNow() { bobber.visible = false; line.visible = false; FISH.hooked = null; if (FISH.state !== 'idle') FISH.state = 'ready'; hint(); }
+function clearApproach() { if (FISH.ap) { FISH.ap.inst.meshes.forEach(m => scene.remove(m)); FISH.ap = null; } }
+function reelInNow() { clearApproach(); bobber.visible = false; line.visible = false; FISH.hooked = null; if (FISH.state !== 'idle') FISH.state = 'ready'; hint(); }
 function actionDown() {
   input.action = true; unlockAudio();
   if (CATCH_OPEN) return;
@@ -2905,54 +3083,80 @@ function actionDown() {
   }
   if (FISH.state === 'bite') { strike(); return; }
 }
-function actionUp() {
-  input.action = false;
-  if (FISH.state === 'charging') cast();
-}
+function actionUp() { input.action = false; if (FISH.state === 'charging') cast(); }
 function cast() {
   const pw = FISH.power;
   rod.userData.tip.getWorldPosition(tipW);
   const fx = -Math.sin(P.yaw), fz = -Math.cos(P.yaw), d = 5 + pw * 40;
   FISH.from.copy(tipW); FISH.to.set(P.x + fx * d, 0, P.z + fz * d);
   FISH.flight = 0; FISH.flightT = 0.5 + d / 45; FISH.state = 'flying';
-  bobber.visible = true; line.visible = true; sfx('cast'); hint();
+  bobber.visible = true; line.visible = true; sfx('cast'); hint(); tutorial('cast');
   rod.userData.kick = 1;
 }
 function landBobber() {
   const x = FISH.to.x, z = FISH.to.z, depth = W.waterY - terrainH(x, z);
-  if (depth < 0.25 || inDeckFootprint(x, z) && depth < 3 && Math.abs(z) < PIER.w / 2) {
+  if (depth < 0.25 || inDeckFootprint(x, z)) {
     toast(depth < 0.25 ? 'That landed on dry ground. Reel in and try again.' : 'Snagged on the pier. Reel in.');
     FISH.state = 'waiting'; FISH.dry = true; FISH.biteIn = 1e9; return;
   }
   FISH.dry = false; splash(x, z, false);
-  FISH.state = 'waiting'; FISH.biteIn = 4 + Math.random() * 12 / biteFactor(); FISH.nibbleIn = 1.5 + Math.random() * 3;
+  FISH.state = 'waiting'; FISH.biteIn = 5 + Math.random() * 11 / biteFactor(); FISH.nibbleIn = 2 + Math.random() * 3;
+  if (PROG.tut < 4) FISH.biteIn = 5; // first-timers get a quick bite
   FISH.depth = depth; hint();
+}
+function startApproach() {
+  const depth = W.waterY - terrainH(FISH.bob.x, FISH.bob.z);
+  const pick = pickBite(depth), inst = instantiate(protoFor(pick.id), 1);
+  inst.meshes.forEach(m => { m.renderOrder = 12; m.castShadow = false; }); inst.addTo(scene);
+  FISH.ap = { pick, inst, t: 0, a0: Math.random() * Math.PI * 2, spin: Math.random() < 0.5 ? 1 : -1, ph: 0, rush: 0 };
+  if (pick.legend) { setTimeout(() => toast('Something big is circling your bait…'), 400); sfx('legend'); }
+}
+function updateApproach(dt) {
+  const ap = FISH.ap; if (!ap) return;
+  ap.t += dt; ap.ph += dt * 9;
+  const L = ap.pick.cm / 100;
+  const k = sm(0, 2.8, ap.t), r = mix(7.5, 0.25 + L * 0.5, k) * (FISH.state === 'bite' ? Math.max(0, 1 - ap.rush) : 1);
+  if (FISH.state === 'bite') ap.rush = Math.min(1, ap.rush + dt * 4);
+  const a = ap.a0 + ap.spin * (1 - k) * 2.2 + (k >= 1 ? Math.sin(ap.t * 2.5) * 0.4 : 0);
+  const x = FISH.bob.x + Math.cos(a) * r, z = FISH.bob.z + Math.sin(a) * r;
+  const y = Math.max(terrainH(x, z) + 0.2, W.waterY - mix(1.2, 0.35, k));
+  // face the float
+  const head = Math.atan2(-(FISH.bob.z - z), FISH.bob.x - x);
+  _q.setFromEuler(_e.set(0, head, 0)); _m.compose(_v.set(x, y, z), _q, _s.setScalar(L));
+  ap.inst.setM(0, _m); ap.inst.iPh.array[0] = ap.ph; ap.inst.flush();
 }
 function strike() {
   if (FISH.state !== 'bite') return;
-  const id = FISH.pending, g = GAME[id];
-  const cm = Math.round(g.cm[0] + (g.cm[1] - g.cm[0]) * Math.pow(Math.random(), 1.7));
-  const frac = (cm - g.cm[0]) / (g.cm[1] - g.cm[0]);
-  FISH.hooked = { id, cm, kg: g.wf * 0.0115 * cm * cm * cm / 1000, pull: g.pull * (0.6 + 0.5 * frac), stam: 1 };
-  FISH.state = 'fight'; FISH.tension = 0.25; FISH.run = 0; FISH.runT = 0.6; FISH.slackT = 0; FISH.overT = 0;
-  FISH.dist = Math.hypot(FISH.bob.x - P.x, FISH.bob.z - P.z); FISH.ang = Math.atan2(FISH.bob.z - P.z, FISH.bob.x - P.x);
-  FISH.inst = instantiate(protoFor(id), 1); FISH.inst.meshes.forEach(m => { m.renderOrder = 12; m.castShadow = false; }); FISH.inst.addTo(scene);
-  sfx('strike'); toast('Hooked up!'); hint();
+  const ap = FISH.ap, pick = ap.pick, g = GAME[pick.id];
+  const late = 1.1 - FISH.biteT, perfect = late < 0.42;
+  const frac = clamp01((pick.cm - g.cm[0]) / (g.cm[1] - g.cm[0]));
+  FISH.hooked = {
+    id: pick.id, cm: pick.cm, legend: pick.legend, kg: g.wf * 0.0115 * pick.cm * pick.cm * pick.cm / 1000,
+    pull: Math.min(1.25, g.pull * (0.6 + 0.5 * frac) * (pick.legend ? 1.2 : 1)), stam: (pick.legend ? 1.6 : 1) - (perfect ? 0.22 : 0),
+    moves: MOVES[pick.id] || [], perfect
+  };
+  FISH.inst = ap.inst; FISH.ap = null;
+  Object.assign(FISH, { state: 'fight', tension: 0.3, run: 0, runT: 0.6, slackT: 0, overT: 0, move: null, moveCD: 1.6, inZoneT: 0 });
+  FISH.dist = Math.max(2.5, Math.hypot(FISH.bob.x - P.x, FISH.bob.z - P.z)); FISH.ang = Math.atan2(FISH.bob.z - P.z, FISH.bob.x - P.x);
+  sfx('strike'); splash(FISH.bob.x, FISH.bob.z, true); shake(0.5);
+  if (perfect) { flash('PERFECT HOOK SET'); questEvent('perfect'); } else toast('Hooked up!');
+  if (pick.legend) flash(pick.legend.toUpperCase());
+  hint(); tutorial('strike');
 }
 function loseFish(msg) {
-  toast(msg); sfx('snap');
-  if (FISH.inst) FISH.inst.meshes.forEach(m => scene.remove(m)); FISH.inst = null; FISH.hooked = null;
-  bobber.visible = false; line.visible = false; FISH.state = 'ready'; hint();
+  toast(msg); sfx('snap'); shake(0.4);
+  if (FISH.inst) FISH.inst.meshes.forEach(m => scene.remove(m)); FISH.inst = null; FISH.hooked = null; FISH.move = null;
+  bobber.visible = false; line.visible = false; FISH.state = 'ready'; hint(); showMove(null);
 }
-const fishPos = new THREE.Vector3();
+
 function updateFishing(dt) {
   rod.userData.tip.getWorldPosition(tipW);
-  // rod bend
-  const load = FISH.state === 'fight' ? FISH.tension : FISH.state === 'bite' ? 0.25 : FISH.state === 'waiting' ? 0.04 : 0;
+  const load = FISH.state === 'fight' ? FISH.tension : FISH.state === 'bite' ? 0.3 : FISH.state === 'waiting' ? 0.04 : 0;
   rod.userData.kick = Math.max(0, (rod.userData.kick || 0) - dt * 3);
-  rodSegs.forEach((s, i) => { s.rotation.x = load * 0.11 * (i / 7 + 0.3) - rod.userData.kick * 0.12 * Math.sin((1 - rod.userData.kick) * 6); });
+  rodSegs.forEach((s, i) => { s.rotation.x = load * 0.12 * (i / 7 + 0.3) - rod.userData.kick * 0.12 * Math.sin((1 - rod.userData.kick) * 6); s.rotation.z = FISH.state === 'fight' ? (FISH.steer || 0) * 0.02 * (i / 7) : 0; });
   const charging = FISH.state === 'charging';
-  rod.rotation.x = mix(rod.rotation.x, charging ? -0.35 - FISH.power * 0.5 : FISH.state === 'fight' ? -0.55 : -0.9, Math.min(1, dt * 8));
+  rod.rotation.x = mix(rod.rotation.x, charging ? -0.35 - FISH.power * 0.5 : FISH.state === 'fight' ? -0.5 + FISH.tension * 0.15 : -0.9, Math.min(1, dt * 8));
+  rod.rotation.z = mix(rod.rotation.z, -0.18 + (FISH.state === 'fight' ? (FISH.steer || 0) * 0.35 : 0), Math.min(1, dt * 6));
   if (FISH.state === 'fight' && input.action) rod.userData.reel.rotation.x += dt * 18;
 
   switch (FISH.state) {
@@ -2961,8 +3165,7 @@ function updateFishing(dt) {
       break;
     case 'flying': {
       FISH.flight += dt / FISH.flightT; const t = Math.min(1, FISH.flight);
-      const ty = W.waterY;
-      FISH.bob.set(mix(FISH.from.x, FISH.to.x, t), mix(FISH.from.y, ty, t) + Math.sin(t * Math.PI) * (3 + FISH.flightT * 4), mix(FISH.from.z, FISH.to.z, t));
+      FISH.bob.set(mix(FISH.from.x, FISH.to.x, t), mix(FISH.from.y, W.waterY, t) + Math.sin(t * Math.PI) * (3 + FISH.flightT * 4), mix(FISH.from.z, FISH.to.z, t));
       bobber.position.copy(FISH.bob); drawLine(tipW, FISH.bob, 0.2);
       if (t >= 1) { FISH.bob.y = waveAt(FISH.to.x, FISH.to.z); landBobber(); }
       break;
@@ -2970,98 +3173,182 @@ function updateFishing(dt) {
     case 'waiting': case 'bite': {
       const surf = FISH.dry ? terrainH(FISH.bob.x, FISH.bob.z) + 0.05 : waveAt(FISH.bob.x, FISH.bob.z);
       let dip = 0;
-      if (input.action && FISH.state === 'waiting') { // retrieve
+      if (input.action && FISH.state === 'waiting') {
+        if (FISH.ap) { toast('You spooked it.'); clearApproach(); FISH.biteIn = 6 + Math.random() * 8; }
         const dx = P.x - FISH.bob.x, dz = P.z - FISH.bob.z, dd = Math.hypot(dx, dz);
         FISH.bob.x += dx / dd * dt * 4.5; FISH.bob.z += dz / dd * dt * 4.5; sfxReel(dt);
         if (dd < 3 || (W.waterY - terrainH(FISH.bob.x, FISH.bob.z) < 0.15 && !FISH.dry)) { reelInNow(); break; }
       }
       if (FISH.state === 'waiting' && !FISH.dry) {
-        FISH.nibbleIn -= dt; FISH.biteIn -= dt;
-        if (FISH.nibbleIn < 0) { FISH.nibbleT = 0.35; FISH.nibbleIn = 1.2 + Math.random() * 3.5; sfx('nibble'); }
-        if (FISH.biteIn < 0) { FISH.pending = pickSpecies(W.waterY - terrainH(FISH.bob.x, FISH.bob.z)); FISH.state = 'bite'; FISH.biteT = 1.1; sfx('bite'); hint(); flash('BITE!'); }
+        FISH.biteIn -= dt;
+        if (FISH.biteIn < 3.4 && !FISH.ap) startApproach();
+        if (FISH.ap && FISH.ap.t > 2.6) { FISH.nibbleIn -= dt; if (FISH.nibbleIn < 0) { FISH.nibbleT = 0.3; FISH.nibbleIn = 0.35 + Math.random() * 0.3; sfx('nibble'); } }
+        if (FISH.biteIn < 0 && FISH.ap) { FISH.state = 'bite'; FISH.biteT = 1.1; sfx('bite'); hint(); flash('BITE!'); shake(0.25); tutorial('bite'); }
       }
       if (FISH.nibbleT > 0) { FISH.nibbleT -= dt; dip = Math.sin(FISH.nibbleT * 40) * 0.05; }
       if (FISH.state === 'bite') {
-        FISH.biteT -= dt; dip = -0.25;
-        if (FISH.biteT < 0) { toast('Missed it. Fresh bait on, wait for the next one.'); FISH.state = 'waiting'; FISH.biteIn = 5 + Math.random() * 10 / biteFactor(); hint(); }
+        FISH.biteT -= dt; dip = -0.3;
+        if (FISH.biteT < 0) { toast('Too slow. It stole the bait.'); clearApproach(); FISH.state = 'waiting'; FISH.biteIn = 5 + Math.random() * 10 / biteFactor(); hint(); }
       }
+      updateApproach(dt);
       FISH.bob.y = surf + dip; bobber.position.copy(FISH.bob); bobber.rotation.z = dip * 2;
       drawLine(tipW, FISH.bob, 0.35);
       break;
     }
     case 'fight': fight(dt); break;
   }
-  updateRings(dt);
+  updateRings(dt); updateDrops(dt);
 }
 
+/* ---------- the fight ---------- */
+const ZONE = [0.42, 0.78];
+function steerInput() {
+  const l = keys.KeyA || keys.ArrowLeft || input.steer < 0, r = keys.KeyD || keys.ArrowRight || input.steer > 0;
+  return (r ? 1 : 0) - (l ? 1 : 0);
+}
+function startMove(k) {
+  const L = FISH.hooked;
+  if (k === 'jump') { FISH.move = { k, t: 0, dur: 0.85 + Math.min(0.5, L.cm / 250), reelT: 0 }; splash(FISH.bob.x, FISH.bob.z, true); sfx('splash', 1); }
+  if (k === 'structure') { FISH.move = { k, t: 0, dur: 2.3, dir: Math.random() < 0.5 ? -1 : 1, good: 0 }; }
+  if (k === 'dig') { FISH.move = { k, t: 0, dur: 2.6 }; }
+  showMove(FISH.move);
+}
+function endMove(ok) {
+  const m = FISH.move; FISH.move = null; FISH.moveCD = 2.2 + Math.random() * 2; showMove(null);
+  if (!m) return;
+  if (m.k === 'jump' && ok) { FISH.hooked.stam -= 0.12; toast('Nice. You bowed to the jump.'); questEvent('jump'); splash(FISH.bob.x, FISH.bob.z, true); }
+  if (m.k === 'structure' && ok) { FISH.hooked.stam -= 0.15; toast('Turned it away from the ' + (P.inBoat ? 'reef' : 'pylons') + '!'); }
+}
 function fight(dt) {
-  const h = FISH.hooked, reeling = input.action;
-  FISH.runT -= dt;
-  if (FISH.runT < 0) {
-    if (FISH.run > 0) { FISH.run = 0; FISH.runT = 0.8 + Math.random() * 1.6; }
-    else { FISH.run = (0.5 + Math.random() * 0.5) * (0.35 + 0.65 * h.stam); FISH.runT = 0.7 + Math.random() * 1.8 * h.stam; FISH.runDir = (Math.random() - 0.5) * 1.4; if (FISH.run > 0.5) { splash(FISH.bob.x, FISH.bob.z, true); } }
+  const h = FISH.hooked, reeling = input.action, R = curRod();
+  FISH.runT -= dt; FISH.moveCD -= dt;
+  if (!FISH.move) {
+    if (FISH.runT < 0) {
+      if (FISH.run > 0) { FISH.run = 0; FISH.runT = 0.8 + Math.random() * 1.5; }
+      else {
+        FISH.run = (0.5 + Math.random() * 0.5) * (0.35 + 0.65 * Math.max(0, h.stam)); FISH.runT = 0.7 + Math.random() * 1.8 * Math.max(0.3, h.stam); FISH.runDir = (Math.random() - 0.5) * 1.4;
+        if (h.moves.length && FISH.moveCD < 0 && Math.random() < 0.55 && h.stam > 0.15) startMove(h.moves[(Math.random() * h.moves.length) | 0]);
+      }
+    }
+  } else {
+    const m = FISH.move; m.t += dt;
+    if (m.k === 'jump') { FISH.run = 0.7; if (reeling && FISH.tension > 0.5) m.reelT += dt; if (m.reelT > 0.28) return loseFish('It jumped and threw the hook. Let go of reel when it jumps.'); if (m.t > m.dur) endMove(true); }
+    if (m.k === 'structure') {
+      FISH.run = 0.85; FISH.ang += dt * m.dir * 0.35;
+      if (steerInput() === -m.dir) m.good += dt;
+      if (m.good > 0.8) endMove(true);
+      else if (m.t > m.dur) return loseFish('Busted off on the ' + (P.inBoat ? 'reef' : 'pylons') + '. Steer it away next time.');
+    }
+    if (m.k === 'dig') { FISH.run = 0.95; if (m.t > m.dur) endMove(true); }
   }
-  const pull = h.pull * FISH.run;
-  const target = reeling ? 0.22 + 0.95 * pull + 0.08 : 0.02 + 0.35 * pull;
+  FISH.steer = steerInput();
+  const pull = h.pull * FISH.run / R.line;
+  const target = reeling ? 0.2 + 0.95 * pull + 0.1 : 0.02 + 0.35 * pull;
   FISH.tension += (target - FISH.tension) * Math.min(1, dt * (reeling ? 2.6 : 1.8));
-  if (reeling) FISH.dist -= dt * (2.6 - 2.2 * pull) * (0.6 + 0.4 * (1 - h.stam * 0.5));
-  FISH.dist += dt * pull * (reeling ? 1.2 : 3.0);
+  if (FISH.move && FISH.move.k === 'dig') FISH.tension += dt * 0.08 * (reeling ? 1 : 0);
+  const inZone = reeling && FISH.tension >= ZONE[0] && FISH.tension <= ZONE[1];
+  FISH.inZone = inZone;
+  if (reeling) FISH.dist -= dt * (inZone ? 3.2 : 1.5) * R.reel * (1 - 0.7 * Math.min(1, pull)) * (0.7 + 0.3 * (1 - Math.max(0, h.stam)));
+  FISH.dist += dt * pull * (reeling ? 1.0 : 2.6) * (FISH.move && FISH.move.k === 'dig' ? 0.5 : 1);
+  FISH.dist = Math.min(FISH.dist, 70);
   FISH.ang += dt * FISH.run * (FISH.runDir || 0) * 0.15;
-  h.stam = Math.max(0.05, h.stam - dt * (0.018 + 0.05 * FISH.tension));
-  if (FISH.tension > 0.92) { FISH.overT += dt; if (FISH.overT > 0.45) return loseFish('Snap! The line broke. Ease off when it runs.'); } else FISH.overT = Math.max(0, FISH.overT - dt);
-  if (FISH.tension < 0.07 && FISH.run > 0.4) { FISH.slackT += dt; if (FISH.slackT > 2.4) return loseFish('Slack line. It threw the hook.'); } else FISH.slackT = Math.max(0, FISH.slackT - dt * 0.5);
+  h.stam = Math.max(-0.2, h.stam - dt * (0.014 + (inZone ? 0.06 : 0.02)) * (h.legend ? 0.65 : 1));
+  if (FISH.tension > 0.93) { FISH.overT += dt; if (FISH.overT > 0.45) return loseFish('Snap! Line broke. Keep the needle in the green.'); } else FISH.overT = Math.max(0, FISH.overT - dt);
+  if (FISH.tension < 0.07 && FISH.run > 0.4 && !FISH.move) { FISH.slackT += dt; if (FISH.slackT > 2.4) return loseFish('Slack line. It threw the hook.'); } else FISH.slackT = Math.max(0, FISH.slackT - dt * 0.5);
   if (reeling) sfxReel(dt);
-  // keep the fish in water
+
   let fx = P.x + Math.cos(FISH.ang) * FISH.dist, fz = P.z + Math.sin(FISH.ang) * FISH.dist;
   if (W.waterY - terrainH(fx, fz) < 0.3) { FISH.ang += 0.05; }
   const near = FISH.dist < (P.deck ? 3.2 : 2.2);
-  const surf = waveAt(fx, fz);
-  FISH.bob.set(fx, surf - (near ? 0 : 0.25 + 0.4 * FISH.run), fz);
+  const surf = waveAt(fx, fz), L = h.cm / 100;
+  let y = surf - (near ? 0 : 0.25 + 0.4 * FISH.run), roll = Math.sin(W.t * 7) * 0.15 * FISH.run, pitch = 0;
+  if (FISH.move && FISH.move.k === 'jump') { const t = FISH.move.t / FISH.move.dur; y = surf + Math.sin(Math.PI * Math.min(1, t)) * (0.5 + L * 0.9); pitch = (0.5 - t) * 1.6; roll = Math.sin(W.t * 18) * 0.5; if (t > 0.98 && !FISH.move.splashed) { FISH.move.splashed = 1; splash(fx, fz, true); } }
+  if (FISH.move && FISH.move.k === 'dig') y = Math.max(terrainH(fx, fz) + 0.3, surf - 1.6);
+  FISH.bob.set(fx, y, fz);
   bobber.position.set(fx, surf, fz);
-  const L = GAME[h.id] ? h.cm / 100 : 0.3;
-  const head = Math.atan2(-(fz - P.z) * (FISH.run > 0.2 ? 1 : -1), (fx - P.x) * (FISH.run > 0.2 ? 1 : -1));
-  _q.setFromEuler(_e.set(0, head, Math.sin(W.t * 7) * 0.15 * FISH.run));
+  const away = FISH.run > 0.2 ? 1 : -1;
+  const head = Math.atan2(-(fz - P.z) * away, (fx - P.x) * away);
+  _q.setFromEuler(_e.set(roll, head, pitch, 'YXZ'));
   _m.compose(FISH.bob, _q, _s.setScalar(L)); FISH.inst.setM(0, _m); FISH.inst.iPh.array[0] += dt * (8 + 16 * FISH.run); FISH.inst.flush();
   drawLine(tipW, FISH.bob, 0.25 * (1 - FISH.tension));
   if (FISH.dist < 1.6 || (near && FISH.dist < 3.2 && P.deck)) landFish();
 }
 
-/* ---------- landing + catch card ---------- */
+/* ---------- landing moment ---------- */
 let CATCH_OPEN = false;
 const holder = new THREE.Group(); camera.add(holder); holder.position.set(0, -0.06, -0.85);
+const drops = (function () {
+  const n = 80, g = new THREE.BufferGeometry(), pos = new Float32Array(n * 3);
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const pts = new THREE.Points(g, new THREE.PointsMaterial({ color: 0xdff6ff, size: 0.012, transparent: true, opacity: 0.9, depthTest: false }));
+  pts.frustumCulled = false; pts.renderOrder = 30; pts.visible = false; holder.add(pts);
+  return { pts, pos, vel: new Float32Array(n * 3), n, t: 0 };
+})();
+function burstDrops() {
+  const d = drops; d.t = 1.2; d.pts.visible = true;
+  for (let i = 0; i < d.n; i++) { d.pos[i * 3] = (Math.random() - 0.5) * 0.5; d.pos[i * 3 + 1] = -0.1 + Math.random() * 0.1; d.pos[i * 3 + 2] = (Math.random() - 0.5) * 0.1; d.vel[i * 3] = (Math.random() - 0.5) * 0.6; d.vel[i * 3 + 1] = 0.4 + Math.random() * 0.9; d.vel[i * 3 + 2] = (Math.random() - 0.5) * 0.3; }
+}
+function updateDrops(dt) {
+  const d = drops; if (d.t <= 0) return; d.t -= dt;
+  for (let i = 0; i < d.n; i++) { d.vel[i * 3 + 1] -= 2.2 * dt; for (let k = 0; k < 3; k++) d.pos[i * 3 + k] += d.vel[i * 3 + k] * dt; }
+  d.pts.geometry.attributes.position.needsUpdate = true; d.pts.material.opacity = Math.min(0.9, d.t);
+  if (d.t <= 0) d.pts.visible = false;
+}
 function landFish() {
   const h = FISH.hooked;
   FISH.inst.meshes.forEach(m => { scene.remove(m); holder.add(m); m.renderOrder = 20; });
-  FISH.state = 'landed'; bobber.visible = false; line.visible = false; CATCH_OPEN = true;
-  sfx('landed'); showCatch(h); hint();
+  FISH.state = 'landed'; bobber.visible = false; line.visible = false; CATCH_OPEN = true; FISH.move = null; showMove(null);
+  h.rarity = rarityOf(h.id, h.legend); h.stars = starsOf(h.id, h.cm, h.legend);
+  h.isNew = !(DEX[h.id] && DEX[h.id].caught); h.pb = !h.isNew && h.cm > (DEX[h.id].best || 0);
+  FISH.lift = 0; TSC.slowT = 0.7; burstDrops(); shake(0.35); punchFov();
+  sfx('landed', RARITY.indexOf(h.rarity)); showBanner(h);
+  setTimeout(() => { if (CATCH_OPEN) showCatch(h); }, 900);
+  if (document.pointerLockElement) document.exitPointerLock();
+  hint(); tutorial('land');
 }
 function updateHolder(dt) {
   if (!CATCH_OPEN || !FISH.inst) return;
-  holder.rotation.y += dt * 0.5;
-  const s = 0.62;
-  _q.setFromEuler(_e.set(0, 0, Math.sin(W.t * 3) * 0.08)); _m.compose(_v.set(0, 0, 0), _q, _s.setScalar(s));
-  FISH.inst.setM(0, _m); FISH.inst.iPh.array[0] += dt * 4; FISH.inst.flush();
+  FISH.lift = Math.min(1, (FISH.lift || 0) + dt * 1.6);
+  const e = 1 - Math.pow(1 - FISH.lift, 3);
+  holder.position.set(IS_TOUCH ? 0 : 0.12 * e, -0.75 + 0.69 * e + (IS_TOUCH ? 0.08 : 0), -0.85);
+  FISH.spin = (FISH.spin || 0) + dt; holder.rotation.y = Math.sin(FISH.spin * 0.7) * 0.55 + (1 - e) * 1.2;
+  _q.setFromEuler(_e.set(0, 0, Math.sin(W.t * 3) * 0.08 * (2 - e))); _m.compose(_v.set(0, 0, 0), _q, _s.setScalar(0.62));
+  FISH.inst.setM(0, _m); FISH.inst.iPh.array[0] += dt * (4 + 10 * (1 - e)); FISH.inst.flush();
 }
 function verdict(h) {
   const r = RULES[h.id] || {};
   if (r.noTake) return { ok: false, cls: 'bad', t: 'No take species', d: r.note };
   if (r.release) return { ok: false, cls: 'warn', t: 'Release', d: r.note };
-  if (r.min && h.cm < r.min) return { ok: false, cls: 'warn', t: 'Undersize', d: 'Minimum ' + r.min + ' cm. Release it.' };
+  if (r.min && h.cm < r.min) return { ok: false, under: true, cls: 'warn', t: 'Undersize', d: 'Minimum ' + r.min + ' cm. Release it.' };
   if (r.max && h.cm > r.max) return { ok: false, cls: 'warn', t: 'Over the slot', d: 'Maximum ' + r.max + ' cm. Release it.' };
   const kept = (BAG[h.id] || 0);
   if (r.bag && kept >= r.bag) return { ok: false, cls: 'warn', t: 'Bag full', d: 'Possession limit of ' + r.bag + ' reached for this trip.' };
   return { ok: true, cls: 'good', t: 'Legal to keep', d: (r.min ? 'Min ' + r.min + ' cm' : 'No min size') + (r.max ? ' · max ' + r.max + ' cm' : '') + (r.bag ? ' · limit ' + r.bag : '') + (r.note ? '. ' + r.note : '') };
 }
 function finishCatch(keep) {
-  const h = FISH.hooked, v = verdict(h);
-  let pts;
-  if (keep && v.ok) { BAG[h.id] = (BAG[h.id] || 0) + 1; pts = Math.round(10 + h.kg * 12); toast('Into the esky. +' + pts); }
-  else { pts = Math.round(8 + h.kg * 10) + (v.ok ? 0 : 6); toast((v.ok ? 'Released. ' : 'Good release. ') + '+' + pts); splashNearPlayer(); }
-  logCatch(h, keep && v.ok, pts);
-  holder.children.slice().forEach(m => holder.remove(m)); FISH.inst = null; FISH.hooked = null;
+  const h = FISH.hooked; if (!h) return;
+  const v = verdict(h), kept = keep && v.ok;
+  const base = Math.round(10 + h.kg * 10 + h.rarity.xp + (h.stars - 1) * 8 + (h.isNew ? 40 : 0));
+  const pts = kept ? base : base + (v.ok ? 4 : 10);
+  if (kept) { BAG[h.id] = (BAG[h.id] || 0) + 1; toast('Into the esky. +' + pts + ' XP'); }
+  else { toast((v.ok ? 'Released. ' : 'Good release. ') + '+' + pts + ' XP'); splashNearPlayer(); }
+  logCatch(h, kept, pts);
+  questEvent('catch', { h, kept, under: !keep && v.under });
+  holder.children.slice().forEach(m => { if (m !== drops.pts) holder.remove(m); }); FISH.inst = null; FISH.hooked = null;
   CATCH_OPEN = false; FISH.state = 'ready'; hideCatch(); hint();
 }
 function splashNearPlayer() { const fx = -Math.sin(P.yaw), fz = -Math.cos(P.yaw); const x = P.x + fx * 2.5, z = P.z + fz * 2.5; if (W.waterY - terrainH(x, z) > 0.2) splash(x, z, false); }
+
+/* camera juice */
+const JUICE = { shake: 0, fov: 0 };
+function shake(a) { JUICE.shake = Math.max(JUICE.shake, a); }
+function punchFov() { JUICE.fov = 1; }
+function updateJuice(dt) {
+  JUICE.shake = Math.max(0, JUICE.shake - dt * 1.8); JUICE.fov = Math.max(0, JUICE.fov - dt * 1.4);
+  if (JUICE.shake > 0) { const s = JUICE.shake * JUICE.shake * 0.03; camera.rotation.x += (Math.random() - 0.5) * s; camera.rotation.y += (Math.random() - 0.5) * s; }
+  const base = innerWidth / innerHeight < 0.8 ? 78 : 68, f = base - 10 * Math.sin(JUICE.fov * Math.PI) * JUICE.fov;
+  if (Math.abs(camera.fov - f) > 0.01) { camera.fov = f; camera.updateProjectionMatrix(); }
+}
 
 /* ---- 07_ui.js ---- */
 /* ======================================================================
@@ -3094,22 +3381,24 @@ function hint() {
     flying: '',
     waiting: t ? 'Wait for the float to go under · hold Reel to wind in' : 'Watch the float · hold to wind in and recast',
     bite: t ? 'TAP NOW to strike!' : 'CLICK NOW to strike!',
-    fight: t ? 'Hold Reel, let go when it runs' : 'Hold to reel · let go when the line gets tight',
+    fight: t ? 'Hold Reel · keep the needle in the green' : 'Hold to reel · keep the needle in the green zone',
     landed: ''
   };
   $('#hint').textContent = P.inBoat && (FISH.state === 'idle' || FISH.state === 'ready') ? (t ? 'Stick to drive · Rod to fish · Exit near pier' : 'W/S throttle · A/D steer · stop to fish · E step off') : map[FISH.state] || '';
   $('#bAct').textContent = FISH.state === 'idle' ? 'Rod' : FISH.state === 'ready' || FISH.state === 'charging' ? 'Cast' : FISH.state === 'bite' ? 'Strike!' : 'Reel';
   $('#bAct').classList.toggle('hot', FISH.state === 'bite');
   $('#bRod').hidden = FISH.state === 'idle' || FISH.state === 'fight' || FISH.state === 'landed';
+  document.body.classList.toggle('fighting', FISH.state === 'fight' || FISH.state === 'landed');
 }
 
 /* ---------- catch card ---------- */
 function showCatch(h) {
   const sp = SPECIES.find(s => s.id === h.id), v = verdict(h), r = RULES[h.id] || {};
-  const d = DEX[h.id] || {}, pb = !d.best || h.cm > d.best;
   $('#catch').innerHTML =
     '<div class="eyebrow">' + esc(S.name) + (P.inBoat ? ' · from the boat' : '') + '</div>' +
-    '<h2>' + esc(sp.name) + (pb ? ' <span class="pb">PB</span>' : '') + '</h2><em>' + esc(sp.sci) + '</em>' +
+    '<div class="tagrow"><span class="rar r-' + h.rarity.id + '">' + h.rarity.name + '</span><span class="stars" aria-label="' + h.stars + ' of 3 stars">' + '★★★'.slice(0, h.stars) + '<i>' + '★★★'.slice(h.stars) + '</i></span>' + (h.isNew ? '<span class="pb">NEW</span>' : h.pb ? '<span class="pb">PB</span>' : '') + '</div>' +
+    (h.legend ? '<div class="legend">' + esc(h.legend) + '</div>' : '') +
+    '<h2>' + esc(sp.name) + '</h2><em>' + esc(sp.sci) + '</em>' +
     '<div class="meas"><div><b>' + h.cm + '</b><span>cm</span></div><div><b>' + (h.kg < 1 ? Math.round(h.kg * 1000) + '</b><span>g' : h.kg.toFixed(1) + '</b><span>kg') + '</span></div>' +
     '<div class="ruler" aria-hidden="true">' + rulerSvg(h.cm, r) + '</div></div>' +
     '<div class="verdict ' + v.cls + '"><b>' + esc(v.t) + '</b><span>' + esc(v.d) + '</span></div>' +
@@ -3134,11 +3423,12 @@ function markSeen(id) { DEX[id] = Object.assign({ seen: true }, DEX[id] || {}); 
 function logCatch(h, kept, pts) {
   const d = DEX[h.id] = DEX[h.id] || {};
   d.seen = true; d.caught = (d.caught || 0) + 1; if (kept) d.kept = (d.kept || 0) + 1; d.best = Math.max(d.best || 0, h.cm);
-  SCORE += pts; LOG.unshift({ id: h.id, cm: h.cm, kept, spot: S.id, t: Date.now() }); LOG.length = Math.min(LOG.length, 40);
+  SCORE += pts; addXP(pts); PROG.credit += pts; saveProg(); LOG.unshift({ id: h.id, cm: h.cm, kept, spot: S.id, t: Date.now() }); LOG.length = Math.min(LOG.length, 40);
   store.set('dex', DEX); store.set('score', SCORE); store.set('log', LOG); updateScore();
 }
 function updateScore() {
-  $('#score').textContent = SCORE.toLocaleString('en-AU');
+  $('#score').textContent = PROG.credit.toLocaleString('en-AU');
+  const L = levelOf(PROG.xp); $('#lvl').textContent = L.lvl; $('#xpbar').style.setProperty('--v', L.frac); $('#lvlbox').title = L.into + ' / ' + L.need + ' XP to level ' + (L.lvl + 1);
   const kept = Object.values(BAG).reduce((a, b) => a + b, 0); $('#esky').textContent = kept;
 }
 
@@ -3237,8 +3527,10 @@ function drawMeters() {
   const m = $('#meter');
   if (FISH.state === 'charging') { m.hidden = false; m.className = 'meter power'; m.style.setProperty('--v', FISH.power); m.dataset.label = 'Cast ' + Math.round(5 + FISH.power * 40) + ' m'; }
   else if (FISH.state === 'fight') {
-    m.hidden = false; m.className = 'meter tension' + (FISH.tension > 0.8 ? ' danger' : ''); m.style.setProperty('--v', Math.min(1, FISH.tension));
-    m.dataset.label = 'Line ' + Math.round(FISH.dist) + ' m' + (FISH.run > 0.4 ? ' · it is running' : '');
+    m.hidden = false; m.className = 'meter tension' + (FISH.tension > 0.85 ? ' danger' : '') + (FISH.inZone ? ' zone' : ''); m.style.setProperty('--v', Math.min(1, FISH.tension));
+    const st = FISH.hooked ? Math.max(0, FISH.hooked.stam) / (FISH.hooked.legend ? 1.6 : 1) : 0;
+    m.style.setProperty('--s', st);
+    m.dataset.label = Math.round(FISH.dist) + ' m · ' + (FISH.inZone ? 'in the zone' : FISH.tension > 0.85 ? 'too tight!' : FISH.tension < ZONE[0] && input.action ? 'wind harder' : FISH.run > 0.4 ? 'it is running' : 'reel');
   } else m.hidden = true;
 }
 
@@ -3273,7 +3565,9 @@ function sfx(kind, k) {
   else if (kind === 'bite') { tone(180, 90, 0.25, 0.5); noise(0.3, 600, 1, 0.5); }
   else if (kind === 'strike') noise(0.15, 3000, 1, 0.6);
   else if (kind === 'snap') tone(1800, 300, 0.12, 0.35, 'square');
-  else if (kind === 'landed') { tone(520, 780, 0.18, 0.2, 'triangle'); setTimeout(() => sfx('splash', 0.4), 80); }
+  else if (kind === 'landed') { const r = k || 0; [523, 659, 784, 1046, 1318].slice(0, 2 + r).forEach((f, i) => setTimeout(() => { const t2 = C.currentTime, o = C.createOscillator(), gg = C.createGain(); o.type = 'triangle'; o.frequency.value = f; o.connect(gg); gg.connect(AU.master); gg.gain.setValueAtTime(0.18, t2); gg.gain.exponentialRampToValueAtTime(0.001, t2 + 0.35); o.start(t2); o.stop(t2 + 0.4); }, i * 90)); setTimeout(() => sfx('splash', 0.6), 40); }
+  else if (kind === 'level') { [660, 880, 1320].forEach((f, i) => setTimeout(() => { const t2 = C.currentTime, o = C.createOscillator(), gg = C.createGain(); o.type = 'square'; o.frequency.value = f; o.connect(gg); gg.connect(AU.master); gg.gain.setValueAtTime(0.06, t2); gg.gain.exponentialRampToValueAtTime(0.001, t2 + 0.2); o.start(t2); o.stop(t2 + 0.22); }, i * 70)); }
+  else if (kind === 'legend') { tone(70, 50, 1.6, 0.5, 'sine'); tone(105, 80, 1.6, 0.25, 'triangle'); }
   else if (kind === 'click') tone(1400, 1200, 0.03, 0.12, 'square');
   else if (kind === 'gull') { const o = C.createOscillator(); o.type = 'sawtooth'; const f = C.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 1800; f.Q.value = 3; o.connect(f); f.connect(g); o.frequency.setValueAtTime(1700, t); o.frequency.linearRampToValueAtTime(2400, t + 0.12); o.frequency.linearRampToValueAtTime(1500, t + 0.3); g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.06, t + 0.04); g.gain.exponentialRampToValueAtTime(0.001, t + 0.32); o.start(t); o.stop(t + 0.35); }
 }
@@ -3283,6 +3577,150 @@ function updateAudio(dt) {
   const near = Math.max(0, 1 - Math.abs(P.x - shoreX(P.z)) / 120);
   AU.surf.gain.value = 0.08 + (0.12 + 0.25 * W.amp) * near * (0.6 + 0.4 * Math.sin(W.t * 0.7));
   if (Math.random() < dt * 0.06 && W.night < 0.5) sfx('gull');
+}
+
+/* ---- 07b_prog.js ---- */
+/* ======================================================================
+   PROGRESSION: levels, coins, bait + rod shop, daily quests, banners,
+   fight prompts, first-run coach
+   ====================================================================== */
+const PROG = Object.assign({ xp: 0, credit: 100, baits: ['prawn'], bait: 'prawn', rods: ['light'], rod: 'light', tut: 0 }, store.get('prog', {}));
+function saveProg() { store.set('prog', PROG); }
+const curBait = () => BAITS.find(b => b.id === PROG.bait) || BAITS[0];
+const curRod = () => RODS.find(r => r.id === PROG.rod) || RODS[0];
+function levelOf(xp) {
+  let lvl = 1; while (60 * (lvl + 1) * lvl <= xp) lvl++;
+  const a = 60 * lvl * (lvl - 1), b = 60 * (lvl + 1) * lvl;
+  return { lvl, into: xp - a, need: b - a, frac: (xp - a) / (b - a) };
+}
+function addXP(n) {
+  const before = levelOf(PROG.xp).lvl; PROG.xp += n; const after = levelOf(PROG.xp).lvl;
+  if (after > before) {
+    setTimeout(() => { flash('LEVEL ' + after); sfx('level'); const r = RODS.find(x => x.lvl === after); if (r) toast('Unlocked in the tackle shop: ' + r.name); }, 1600);
+  }
+}
+
+/* ---------- daily quests ---------- */
+function todayKey() { const b = new Date(Date.now() + 10 * 3600e3); return b.toISOString().slice(0, 10); }
+let QUESTS = store.get('quests', null);
+function ensureQuests() {
+  const k = todayKey();
+  if (QUESTS && QUESTS.day === k) return;
+  const seed = k.split('-').reduce((a, b) => a * 31 + (+b), 7), picks = [];
+  for (let i = 0; picks.length < 3 && i < 50; i++) { const j = Math.floor(hash(seed, i, 5) * QUEST_POOL.length); if (picks.indexOf(j) < 0) picks.push(j); }
+  QUESTS = { day: k, list: picks.map(i => ({ i, p: 0, done: false, s: [] })) };
+  store.set('quests', QUESTS);
+}
+function questEvent(type, d) {
+  ensureQuests();
+  QUESTS.list.forEach(q => {
+    if (q.done) return;
+    const Q = QUEST_POOL[q.i];
+    if (type === 'catch') {
+      const h = d.h;
+      if (Q.k === 'count') q.p++;
+      if (Q.k === 'species' && q.s.indexOf(h.id) < 0) { q.s.push(h.id); q.p = q.s.length; }
+      if (Q.k === 'stars' && h.stars >= 2) q.p = 1;
+      if (Q.k === 'release' && d.under) q.p++;
+      if (Q.k === 'boat' && P.inBoat) q.p++;
+      if (Q.k === 'golden' && goldenHour()) q.p++;
+      if (Q.k === 'cm' && h.cm >= Q.n) q.p = Q.n;
+      if (Q.k === 'rare' && RARITY.indexOf(h.rarity) >= 2) q.p++;
+      if (Q.k === 'keep' && d.kept) q.p++;
+    }
+    if (type === 'perfect' && Q.k === 'perfect') q.p++;
+    if (type === 'jump' && Q.k === 'jump') q.p++;
+    const goal = Q.k === 'stars' || Q.k === 'rare' ? 1 : Q.n;
+    if (q.p >= goal) { q.done = true; PROG.credit += Q.r; addXP(Math.round(Q.r / 2)); saveProg(); setTimeout(() => { toast('Quest done: ' + Q.t + ' · +' + Q.r + ' coins'); sfx('level'); }, 1200); }
+  });
+  store.set('quests', QUESTS); renderQuests(); updateScore();
+}
+function renderQuests() {
+  ensureQuests();
+  const el = $('#quests'); if (!el) return;
+  const done = QUESTS.list.filter(q => q.done).length;
+  el.innerHTML = '<button class="qh" id="qToggle" aria-expanded="' + !el.classList.contains('min') + '">Today\'s quests <b>' + done + '/3</b></button><ol>' + QUESTS.list.map(q => {
+    const Q = QUEST_POOL[q.i], goal = Q.k === 'stars' || Q.k === 'rare' ? 1 : Q.n, p = Q.k === 'cm' ? (q.done ? 1 : 0) : Math.min(q.p, goal), g2 = Q.k === 'cm' ? 1 : goal;
+    return '<li class="' + (q.done ? 'done' : '') + '"><span>' + esc(Q.t) + '</span><i>' + (q.done ? 'Done' : p + '/' + g2) + ' · ' + Q.r + 'c</i></li>';
+  }).join('') + '</ol>';
+  $('#qToggle').onclick = () => { el.classList.toggle('min'); store.set('qmin', el.classList.contains('min')); renderQuests(); };
+}
+
+/* ---------- tackle shop ---------- */
+function openShop() {
+  const lvl = levelOf(PROG.xp).lvl;
+  const top = b => Object.entries(b.likes).filter(e => e[1] > 1.2).sort((x, y) => y[1] - x[1]).slice(0, 3).map(e => SPECIES.find(s => s.id === e[0]).name.replace(/ \(.*\)/, '')).join(', ');
+  $('#shopBody').innerHTML =
+    '<p class="lede">Coins come from every fish you land and from daily quests. Bait changes which fish bite. A heavier rod lets you lean harder before the line snaps. You have <b>' + PROG.credit + ' coins</b>, level ' + lvl + '.</p>' +
+    '<h3>Bait</h3><div class="shop">' + BAITS.map(b => {
+      const own = PROG.baits.indexOf(b.id) >= 0, eq = PROG.bait === b.id;
+      return '<article class="sc' + (eq ? ' eq' : '') + '"><b>' + esc(b.name) + '</b><p>' + esc(b.blurb) + '</p><small>Best for: ' + esc(top(b) || 'luderick') + '</small>' +
+        '<button class="btn ' + (eq ? '' : own || PROG.credit >= b.cost ? 'primary' : '') + '" data-bait="' + b.id + '" ' + (eq || (!own && PROG.credit < b.cost) ? 'disabled' : '') + '>' + (eq ? 'On the hook' : own ? 'Use' : 'Buy · ' + b.cost) + '</button></article>';
+    }).join('') + '</div>' +
+    '<h3>Rods</h3><div class="shop">' + RODS.map(r => {
+      const own = PROG.rods.indexOf(r.id) >= 0, eq = PROG.rod === r.id, lock = lvl < r.lvl;
+      return '<article class="sc' + (eq ? ' eq' : '') + '"><b>' + esc(r.name) + '</b><p>' + esc(r.blurb) + '</p><small>Line strength ×' + r.line + ' · winding ×' + r.reel + '</small>' +
+        '<button class="btn ' + (eq ? '' : own || (PROG.credit >= r.cost && !lock) ? 'primary' : '') + '" data-rod="' + r.id + '" ' + (eq || lock || (!own && PROG.credit < r.cost) ? 'disabled' : '') + '>' + (eq ? 'In hand' : lock ? 'Level ' + r.lvl : own ? 'Use' : 'Buy · ' + r.cost) + '</button></article>';
+    }).join('') + '</div><p class="src">Bait preferences are simplified from common south-east Queensland angling practice, tuned for the game.</p>';
+  $('#shopBody').onclick = e => {
+    const b = e.target.closest('[data-bait]'), r = e.target.closest('[data-rod]');
+    if (b) { const it = BAITS.find(x => x.id === b.dataset.bait); if (PROG.baits.indexOf(it.id) < 0) { PROG.credit -= it.cost; PROG.baits.push(it.id); sfx('level'); } PROG.bait = it.id; }
+    if (r) { const it = RODS.find(x => x.id === r.dataset.rod); if (PROG.rods.indexOf(it.id) < 0) { PROG.credit -= it.cost; PROG.rods.push(it.id); sfx('level'); } PROG.rod = it.id; }
+    if (b || r) { saveProg(); updateScore(); renderBait(); openShop(); }
+  };
+  openPanel('#shop');
+}
+function renderBait() { const el = $('#baitChip'); if (el) el.innerHTML = '<i>Bait</i>' + esc(curBait().name) + ' <i>Rod</i>' + esc(curRod().name.split(' ')[0]); }
+function cycleBait() {
+  const i = PROG.baits.indexOf(PROG.bait); PROG.bait = PROG.baits[(i + 1) % PROG.baits.length]; saveProg(); renderBait();
+  toast('Bait: ' + curBait().name + (FISH.state === 'waiting' ? ' (applies next cast)' : ''));
+}
+function nearShop() { return !P.inBoat && Math.hypot(P.x - (PIER.x0 - 10), P.z + 12) < 7; }
+
+/* ---------- fight prompts ---------- */
+function showMove(m) {
+  const el = $('#move'), touch = $('#steer');
+  document.body.classList.toggle('moving', !!m);
+  if (!m) { el.hidden = true; touch.hidden = true; input.steer = 0; return; }
+  el.hidden = false; el.className = 'move m-' + m.k;
+  if (m.k === 'jump') el.innerHTML = '<b>JUMP!</b><span>Let go of reel until it lands</span>';
+  if (m.k === 'dig') el.innerHTML = '<b>It\'s digging in</b><span>Short pumps · keep the needle in the green</span>';
+  if (m.k === 'structure') {
+    const need = -m.dir;
+    el.innerHTML = '<b>' + (need < 0 ? '◀ Steer' : 'Steer ▶') + '</b><span>It is running for the ' + (P.inBoat ? 'reef' : 'pylons') + ' · ' + (IS_TOUCH ? 'hold the steer button' : need < 0 ? 'hold A' : 'hold D') + '</span><i class="sbar"><u></u></i>';
+    touch.hidden = !IS_TOUCH; touch.dataset.need = need;
+  }
+}
+function updateMoveUI() {
+  const m = FISH.move; if (!m || m.k !== 'structure') return;
+  const u = document.querySelector('#move .sbar u'); if (u) u.style.width = Math.min(100, m.good / 0.8 * 100) + '%';
+}
+
+/* ---------- catch banner ---------- */
+function showBanner(h) {
+  const sp = SPECIES.find(s => s.id === h.id), el = $('#banner');
+  el.className = 'banner r-' + h.rarity.id; el.hidden = false;
+  el.innerHTML = '<div class="bk">' + (h.legend ? 'LEGEND LANDED' : h.isNew ? 'NEW SPECIES' : h.pb ? 'PERSONAL BEST' : h.rarity.name.toUpperCase()) + '</div>' +
+    '<div class="bn">' + esc(h.legend || sp.name) + '</div><div class="bs">' + '★'.repeat(h.stars) + '<i>' + '★'.repeat(3 - h.stars) + '</i> · ' + h.cm + ' cm</div>';
+  el.classList.remove('go'); void el.offsetWidth; el.classList.add('go');
+  const cf = $('#confetti'); cf.innerHTML = '';
+  if (RARITY.indexOf(h.rarity) >= 2 || h.isNew || h.pb) {
+    const cols = ['#ffd23a', '#ff4d24', '#57d68d', '#5fc8ff', '#f3f6f4'];
+    for (let i = 0; i < 46; i++) { const d = document.createElement('i'); d.style.cssText = 'left:' + (Math.random() * 100) + '%;background:' + cols[i % 5] + ';animation-delay:' + (Math.random() * 0.4) + 's;--dx:' + ((Math.random() - 0.5) * 160) + 'px;--r:' + (Math.random() * 720) + 'deg'; cf.appendChild(d); }
+  }
+  setTimeout(() => { el.hidden = true; cf.innerHTML = ''; }, 2600);
+}
+
+/* ---------- first-run coach ---------- */
+const TUT = ['Hold click or Space to wind up. Let go to cast.', 'Watch the water. A fish is coming to check your float.', 'The float went under. Click now to strike!', 'Hold to reel. Keep the needle in the green zone. Let go if it jumps.'];
+const TUT_T = ['Hold Cast to wind up. Let go to throw.', 'Watch the water. A fish is coming to check your float.', 'The float went under. Tap Strike now!', 'Hold Reel. Keep the needle in the green zone. Let go if it jumps.'];
+const TUT_EV = ['cast', 'bite', 'strike', 'land'];
+function tutorial(ev) {
+  if (ev && PROG.tut < 4 && TUT_EV[PROG.tut] === ev) { PROG.tut++; saveProg(); }
+  const el = $('#coach'); if (!el) return;
+  if (PROG.tut >= 4 || !GAME_ON || FISH.state === 'idle') { el.hidden = true; document.body.classList.remove('coaching'); return; }
+  document.body.classList.add('coaching');
+  el.hidden = false; el.innerHTML = '<i>' + (PROG.tut + 1) + ' / 4</i>' + esc((IS_TOUCH ? TUT_T : TUT)[PROG.tut]);
 }
 
 /* ---- 08_live.js ---- */
@@ -3382,15 +3820,19 @@ async function startSpot(spot) {
   spawnSeen();
   setBar(1, 'Ready'); await nextFrame();
   $('#loader').hidden = true; $('#spotName').textContent = spot.name; $('#spotReg').textContent = spot.region;
-  GAME_ON = true; document.body.classList.add('playing'); hint();
+  // quick start: end of the pier, rod out, facing the water
+  P.x = PIER.x1 - 2; P.z = 0.4; P.deck = true; P.yaw = -Math.PI / 2 + 0.25; P.pitch = -0.12; P.y = PIER.h + 1.65;
+  GAME_ON = true; document.body.classList.add('playing'); FISH.state = 'idle'; toggleRod(); hint(); renderQuests(); renderBait(); updateScore(); tutorial();
   try { store.set('lastSpot', spot.id); } catch (e) {}
-  toast(IS_TOUCH ? 'Drag to look, stick to walk. Rod button to fish.' : 'Click the view to look around. Walk out along the pier and press F.');
+  toast(spot.name + ' · bait: ' + curBait().name + (PROG.tut < 4 ? '' : ' · B swaps bait, T opens the tackle shop'));
 }
 
 let last = performance.now(), ema = 0.016, adaptT = 0, condT = 0, sunTick = 0, frameN = 0;
 function frame(now) {
   requestAnimationFrame(frame);
-  const raw = Math.min(0.5, (now - last) / 1000); last = now; const dt = Math.min(window.__dtcap || 0.05, raw);
+  const raw = Math.min(0.5, (now - last) / 1000); last = now;
+  if (TSC.slowT > 0) { TSC.slowT -= raw; TSC.scale = mix(TSC.scale, 0.3, 0.3); } else TSC.scale = mix(TSC.scale, 1, 0.08);
+  const dt = Math.min(window.__dtcap || 0.05, raw) * TSC.scale;
   ema += (raw - ema) * 0.05; adaptT += raw; frameN++;
   if (adaptT > 2 && !window.__noadapt) {
     adaptT = 0;
@@ -3399,7 +3841,7 @@ function frame(now) {
   }
   if (W.targetY !== undefined) W.waterY += (W.targetY - W.waterY) * Math.min(1, dt * 0.2);
   if (GAME_ON) {
-    updateBoat(dt); updatePlayer(dt); updateFishing(dt); updateSeen(dt); updateHolder(dt); updateAudio(dt);
+    updateBoat(dt); updatePlayer(dt); updateJuice(raw); updateFishing(dt); updateSeen(dt); updateHolder(raw); updateAudio(dt); updateMoveUI();
     if (frameN % 2 === 0) drawMinimap();
     drawMeters();
     condT += dt; if (condT > 1) { condT = 0; renderConditions(); }
@@ -3419,6 +3861,11 @@ function frame(now) {
 $('#bSpots').onclick = () => { renderStart(); $('#start').hidden = false; $('#start').classList.add('again'); if (document.pointerLockElement) document.exitPointerLock(); };
 $('#bHire').onclick = () => openHire();
 $('#bDex').onclick = () => openDex();
+$('#bShop').onclick = () => openShop();
+$('#bMenu').onclick = () => { const o = document.body.classList.toggle('menu-open'); $('#bMenu').setAttribute('aria-expanded', o); $('#bMenu').textContent = o ? 'Close' : 'Menu'; if (o) { $('#quests').classList.remove('min'); renderQuests(); } };
+document.querySelector('.tools').addEventListener('click', () => { if (document.body.classList.contains('menu-open')) $('#bMenu').click(); });
+$('#baitChip').onclick = () => openShop();
+['#stL', '#stR'].forEach((id, i) => { const b = $(id); const on = e => { e.preventDefault(); input.steer = i ? 1 : -1; }, off = () => { input.steer = 0; }; b.addEventListener('pointerdown', on); b.addEventListener('pointerup', off); b.addEventListener('pointercancel', off); b.addEventListener('pointerleave', off); });
 $('#bSound').onclick = () => toggleSound();
 $('#bTime').onclick = () => { const order = ['live', 'dawn', 'noon', 'dusk', 'night']; TIME_MODE = order[(order.indexOf(TIME_MODE) + 1) % order.length]; $('#bTime').textContent = TIME_MODE === 'live' ? 'Time: now' : 'Time: ' + TIME_MODE; updateSun(); renderConditions(); };
 document.querySelectorAll('.panel .x').forEach(b => b.onclick = () => closePanels());
@@ -3435,17 +3882,17 @@ $('#bUse').onclick = () => interact();
   const end = e => { if (e.pointerId !== id) return; id = null; input.joy.x = input.joy.y = 0; knob.style.transform = ''; };
   pad.addEventListener('pointerup', end); pad.addEventListener('pointercancel', end);
 })();
-setInterval(() => { if (GAME_ON) { const nb = nearBoat(); $('#bUse').textContent = P.inBoat ? 'Step off' : nb ? 'Take boat' : 'Hire'; $('#useTip').hidden = !(nb && !IS_TOUCH); } }, 300);
+setInterval(() => { if (GAME_ON) { const nb = nearBoat(), ns = nearShop(); $('#bUse').textContent = P.inBoat ? 'Step off' : nb ? 'Take boat' : ns ? 'Tackle' : 'Hire'; $('#useTip').hidden = !((nb || ns) && !IS_TOUCH); $('#useTip').textContent = ns ? 'E · bait & tackle shop' : 'E · take the hire tinnie'; tutorial(); } }, 300);
 
 (async function boot() {
-  resize(); buildBoat();
+  resize(); buildBoat(); if (store.get('qmin', true)) $('#quests').classList.add('min');
   setBar(0.2, 'Shaping the bay…'); await nextFrame();
   buildWorld(SPOTS[0]); placeAtPier(); simulate();
   renderStart(); updateScore();
   $('#bSound').textContent = AU.on ? 'Sound on' : 'Sound off';
   setBar(1); $('#loader').hidden = true; $('#start').hidden = false;
   last = performance.now(); requestAnimationFrame(frame);
-  window.__bf = { sim(sec, act) { for (let t = 0; t < sec; t += 0.05) { if (act !== undefined) input.action = act; updateBoat(0.05); updatePlayer(0.05); updateFishing(0.05); updateSeen(0.05); updateHolder(0.05); updateWorld(0.05); if (FISH.state === 'landed') break; } return FISH.state; }, P, B, FISH, S: () => S, W, LIVE, startSpot, SPOTS, cast: (p) => { if (FISH.state === 'idle') toggleRod(); FISH.state = 'charging'; FISH.power = p; actionUp(); }, strike, keys, input, openHire, openDex, setTime: m => { TIME_MODE = m; updateSun(); } };
+  window.__bf = { sim(sec, act) { for (let t = 0; t < sec; t += 0.05) { if (act !== undefined) input.action = act; updateBoat(0.05); updatePlayer(0.05); updateFishing(0.05); updateMoveUI(); updateSeen(0.05); updateHolder(0.05); updateWorld(0.05); if (FISH.state === 'landed') break; } return FISH.state; }, P, B, FISH, S: () => S, W, LIVE, startSpot, SPOTS, cast: (p) => { if (FISH.state === 'idle') toggleRod(); FISH.state = 'charging'; FISH.power = p; actionUp(); }, strike, keys, input, PROG, finishCatch, verdict, startMove, openShop, forceBite: (id, cm) => { FISH.biteIn = 3.3; const o = pickBite; pickBite = () => { pickBite = o; return { id, cm }; }; }, openHire, openDex, setTime: m => { TIME_MODE = m; updateSun(); } };
 })();
 
 })();

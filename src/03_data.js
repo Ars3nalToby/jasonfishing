@@ -134,3 +134,52 @@ function kmBetween(a, b, c, d) {
   const h = Math.sin(dl / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin(dn / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(h));
 }
+
+/* ---------- progression data ---------- */
+/* Bait preferences: simplified from common SEQ angling practice, tuned for play. Unlisted species use 0.7. */
+const BAITS = [
+  { id: 'prawn', name: 'Prawn', cost: 0, blurb: 'The all-rounder. Bream love it, so do toadfish.', likes: { bream: 1.8, whiting: 1.3, flathead: 1.1, snapper: 1.2, toadfish: 1.8, jack: 1.1, trevally: 1.0, luderick: 0.5 } },
+  { id: 'weed', name: 'Green weed', cost: 40, blurb: 'Luderick specialist. Most other fish ignore it.', likes: { luderick: 5, mullet: 1.6, bream: 0.4, toadfish: 0.2, garfish: 0.8 } },
+  { id: 'worm', name: 'Beach worm', cost: 60, blurb: 'Whiting candy. Fish it on the sand flats.', likes: { whiting: 3.2, bream: 1.4, flathead: 0.8, tailor: 0.5, toadfish: 1.2 } },
+  { id: 'pilchard', name: 'Pilchard', cost: 90, blurb: 'Oily and smelly. Tailor, mackerel and big snapper.', likes: { tailor: 2.8, mackerel: 2.0, snapper: 1.6, mulloway: 1.4, flathead: 1.3, kingfish: 1.5, cobia: 1.5, trevally: 1.3, mahi: 1.4, whiting: 0.3, luderick: 0.2 } },
+  { id: 'squid', name: 'Squid strip', cost: 140, blurb: 'Tough bait that stays on. Snapper, mulloway, rays.', likes: { snapper: 2.3, mulloway: 1.9, cobia: 1.7, kingfish: 1.6, groper: 1.6, eagleray: 1.6, wobbegong: 1.4, shovelnose: 1.3, toadfish: 0.5 } },
+  { id: 'plastic', name: 'Soft plastic', cost: 220, blurb: 'A lure. Flathead, jacks and trevally hit it. Pests leave it alone.', likes: { flathead: 2.8, jack: 2.4, trevally: 2.0, mulloway: 1.4, kingfish: 1.5, tailor: 1.3, bream: 1.0, whiting: 0.3, toadfish: 0.15, mullet: 0.1, garfish: 0.2, luderick: 0.1, shovelnose: 0.3, eagleray: 0.3 } }
+];
+/* Rods: line = how much pull the line takes before it snaps, reel = winding speed */
+const RODS = [
+  { id: 'light', name: '2–4 kg bream rod', line: 1.0, reel: 1.0, cost: 0, lvl: 1, blurb: 'Light and fun. Big fish will test it.' },
+  { id: 'medium', name: '4–8 kg spin rod', line: 1.35, reel: 1.15, cost: 450, lvl: 3, blurb: 'Handles tailor, snapper and small jewies.' },
+  { id: 'heavy', name: '10–15 kg boat rod', line: 1.8, reel: 1.3, cost: 1400, lvl: 6, blurb: 'For kingfish, cobia and the legends.' }
+];
+/* Fight moves per species: jump = leaps clear of the water, structure = runs for the pylons/reef, dig = heavy bottom slog */
+const MOVES = {
+  tailor: ['jump'], mahi: ['jump'], garfish: ['jump'], mullet: ['jump'], mackerel: ['jump'], cobia: ['dig'],
+  kingfish: ['structure'], jack: ['structure'], groper: ['structure', 'dig'], trevally: ['structure'], snapper: ['structure', 'dig'],
+  flathead: ['dig'], mulloway: ['dig', 'structure'], eagleray: ['dig'], shovelnose: ['dig'], wobbegong: ['dig'], greynurse: ['dig'],
+  bream: ['structure'], luderick: ['structure'], whiting: [], toadfish: []
+};
+/* One legend per spot (fictional names for the game, real species). Bite at dawn, dusk or night on a moving tide. */
+const LEGENDS = {
+  shorncliffe: { id: 'mulloway', name: 'The Bramble Bay Ghost', cm: [128, 146] },
+  woodypoint: { id: 'snapper', name: 'Big Red of Woody Point', cm: [88, 102] },
+  spit: { id: 'trevally', name: 'The Seaway Bulldozer', cm: [96, 112] },
+  mooloolaba: { id: 'mahi', name: 'Point Cartwright Bull', cm: [128, 145] }
+};
+const RARITY = [
+  { id: 'common', name: 'Common', xp: 0 }, { id: 'uncommon', name: 'Uncommon', xp: 10 }, { id: 'rare', name: 'Rare', xp: 25 },
+  { id: 'epic', name: 'Epic', xp: 50 }, { id: 'legendary', name: 'Legendary', xp: 250 }
+];
+const QUEST_POOL = [
+  { k: 'count', n: 3, t: 'Land 3 fish', r: 80 },
+  { k: 'count', n: 5, t: 'Land 5 fish', r: 140 },
+  { k: 'species', n: 2, t: 'Catch 2 different species', r: 90 },
+  { k: 'stars', n: 2, t: 'Land a 2-star fish or better', r: 100 },
+  { k: 'release', n: 2, t: 'Release 2 undersize fish', r: 90 },
+  { k: 'boat', n: 1, t: 'Catch a fish from the tinnie', r: 120 },
+  { k: 'golden', n: 1, t: 'Catch a fish at dawn, dusk or night', r: 110 },
+  { k: 'cm', n: 45, t: 'Land a fish over 45 cm', r: 130 },
+  { k: 'rare', n: 1, t: 'Catch a Rare fish or better', r: 150 },
+  { k: 'perfect', n: 2, t: 'Get 2 perfect hook sets', r: 80 },
+  { k: 'jump', n: 1, t: 'Ease off through a jump without losing the fish', r: 90 },
+  { k: 'keep', n: 2, t: 'Keep 2 legal fish for the esky', r: 80 }
+];

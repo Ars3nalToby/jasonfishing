@@ -392,7 +392,10 @@ function buildPier() {
   [-1, 1].forEach(s => { const pl = new THREE.Mesh(new THREE.BoxGeometry(rl + 0.8, 0.06, rw / 2 / Math.cos(0.32) + 0.35), rm); pl.rotation.x = s * 0.32; pl.position.set(rx, h + 2.95, s * rw / 4); pl.castShadow = true; roof.add(pl); });
   // bench and fish-cleaning table with tap
   const bench = new THREE.Mesh(new THREE.BoxGeometry(2, 0.08, 0.45), woodMat); bench.position.set(rx - 1, h + 0.48, -rw / 2 + 0.6); roof.add(bench);
-  const table = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.9, 0.7), new THREE.MeshStandardMaterial({ color: 0xd8dcdc, roughness: 0.3, metalness: 0.7 })); table.position.set(rx + 1.4, h + 0.45, rw / 2 - 0.6); roof.add(table);
+  const steel = new THREE.MeshStandardMaterial({ color: 0xd8dcdc, roughness: 0.3, metalness: 0.7 });
+  const table = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.06, 0.7), steel); table.position.set(rx + 1.4, h + 0.9, rw / 2 - 0.6); roof.add(table);
+  [[-0.7, -0.28], [0.7, -0.28], [-0.7, 0.28], [0.7, 0.28]].forEach(([a, b]) => { const l = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.9, 6), steel); l.position.set(rx + 1.4 + a, h + 0.45, rw / 2 - 0.6 + b); roof.add(l); });
+  const sink = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.12, 0.4), new THREE.MeshStandardMaterial({ color: 0x9aa2a5, roughness: 0.2, metalness: 0.9 })); sink.position.set(rx + 1.75, h + 0.88, rw / 2 - 0.6); roof.add(sink);
   const tap = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.025, 6, 12, Math.PI), metalMat); tap.position.set(rx + 1.4, h + 1.05, rw / 2 - 0.35); roof.add(tap);
   props.add(roof);
   // rules sign at the entry

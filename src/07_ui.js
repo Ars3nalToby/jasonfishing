@@ -28,22 +28,24 @@ function hint() {
     flying: '',
     waiting: t ? 'Wait for the float to go under · hold Reel to wind in' : 'Watch the float · hold to wind in and recast',
     bite: t ? 'TAP NOW to strike!' : 'CLICK NOW to strike!',
-    fight: t ? 'Hold Reel, let go when it runs' : 'Hold to reel · let go when the line gets tight',
+    fight: t ? 'Hold Reel · keep the needle in the green' : 'Hold to reel · keep the needle in the green zone',
     landed: ''
   };
   $('#hint').textContent = P.inBoat && (FISH.state === 'idle' || FISH.state === 'ready') ? (t ? 'Stick to drive · Rod to fish · Exit near pier' : 'W/S throttle · A/D steer · stop to fish · E step off') : map[FISH.state] || '';
   $('#bAct').textContent = FISH.state === 'idle' ? 'Rod' : FISH.state === 'ready' || FISH.state === 'charging' ? 'Cast' : FISH.state === 'bite' ? 'Strike!' : 'Reel';
   $('#bAct').classList.toggle('hot', FISH.state === 'bite');
   $('#bRod').hidden = FISH.state === 'idle' || FISH.state === 'fight' || FISH.state === 'landed';
+  document.body.classList.toggle('fighting', FISH.state === 'fight' || FISH.state === 'landed');
 }
 
 /* ---------- catch card ---------- */
 function showCatch(h) {
   const sp = SPECIES.find(s => s.id === h.id), v = verdict(h), r = RULES[h.id] || {};
-  const d = DEX[h.id] || {}, pb = !d.best || h.cm > d.best;
   $('#catch').innerHTML =
     '<div class="eyebrow">' + esc(S.name) + (P.inBoat ? ' · from the boat' : '') + '</div>' +
-    '<h2>' + esc(sp.name) + (pb ? ' <span class="pb">PB</span>' : '') + '</h2><em>' + esc(sp.sci) + '</em>' +
+    '<div class="tagrow"><span class="rar r-' + h.rarity.id + '">' + h.rarity.name + '</span><span class="stars" aria-label="' + h.stars + ' of 3 stars">' + '★★★'.slice(0, h.stars) + '<i>' + '★★★'.slice(h.stars) + '</i></span>' + (h.isNew ? '<span class="pb">NEW</span>' : h.pb ? '<span class="pb">PB</span>' : '') + '</div>' +
+    (h.legend ? '<div class="legend">' + esc(h.legend) + '</div>' : '') +
+    '<h2>' + esc(sp.name) + '</h2><em>' + esc(sp.sci) + '</em>' +
     '<div class="meas"><div><b>' + h.cm + '</b><span>cm</span></div><div><b>' + (h.kg < 1 ? Math.round(h.kg * 1000) + '</b><span>g' : h.kg.toFixed(1) + '</b><span>kg') + '</span></div>' +
     '<div class="ruler" aria-hidden="true">' + rulerSvg(h.cm, r) + '</div></div>' +
     '<div class="verdict ' + v.cls + '"><b>' + esc(v.t) + '</b><span>' + esc(v.d) + '</span></div>' +
@@ -68,11 +70,12 @@ function markSeen(id) { DEX[id] = Object.assign({ seen: true }, DEX[id] || {}); 
 function logCatch(h, kept, pts) {
   const d = DEX[h.id] = DEX[h.id] || {};
   d.seen = true; d.caught = (d.caught || 0) + 1; if (kept) d.kept = (d.kept || 0) + 1; d.best = Math.max(d.best || 0, h.cm);
-  SCORE += pts; LOG.unshift({ id: h.id, cm: h.cm, kept, spot: S.id, t: Date.now() }); LOG.length = Math.min(LOG.length, 40);
+  SCORE += pts; addXP(pts); PROG.credit += pts; saveProg(); LOG.unshift({ id: h.id, cm: h.cm, kept, spot: S.id, t: Date.now() }); LOG.length = Math.min(LOG.length, 40);
   store.set('dex', DEX); store.set('score', SCORE); store.set('log', LOG); updateScore();
 }
 function updateScore() {
-  $('#score').textContent = SCORE.toLocaleString('en-AU');
+  $('#score').textContent = PROG.credit.toLocaleString('en-AU');
+  const L = levelOf(PROG.xp); $('#lvl').textContent = L.lvl; $('#xpbar').style.setProperty('--v', L.frac); $('#lvlbox').title = L.into + ' / ' + L.need + ' XP to level ' + (L.lvl + 1);
   const kept = Object.values(BAG).reduce((a, b) => a + b, 0); $('#esky').textContent = kept;
 }
 
@@ -171,8 +174,10 @@ function drawMeters() {
   const m = $('#meter');
   if (FISH.state === 'charging') { m.hidden = false; m.className = 'meter power'; m.style.setProperty('--v', FISH.power); m.dataset.label = 'Cast ' + Math.round(5 + FISH.power * 40) + ' m'; }
   else if (FISH.state === 'fight') {
-    m.hidden = false; m.className = 'meter tension' + (FISH.tension > 0.8 ? ' danger' : ''); m.style.setProperty('--v', Math.min(1, FISH.tension));
-    m.dataset.label = 'Line ' + Math.round(FISH.dist) + ' m' + (FISH.run > 0.4 ? ' · it is running' : '');
+    m.hidden = false; m.className = 'meter tension' + (FISH.tension > 0.85 ? ' danger' : '') + (FISH.inZone ? ' zone' : ''); m.style.setProperty('--v', Math.min(1, FISH.tension));
+    const st = FISH.hooked ? Math.max(0, FISH.hooked.stam) / (FISH.hooked.legend ? 1.6 : 1) : 0;
+    m.style.setProperty('--s', st);
+    m.dataset.label = Math.round(FISH.dist) + ' m · ' + (FISH.inZone ? 'in the zone' : FISH.tension > 0.85 ? 'too tight!' : FISH.tension < ZONE[0] && input.action ? 'wind harder' : FISH.run > 0.4 ? 'it is running' : 'reel');
   } else m.hidden = true;
 }
 
@@ -207,7 +212,9 @@ function sfx(kind, k) {
   else if (kind === 'bite') { tone(180, 90, 0.25, 0.5); noise(0.3, 600, 1, 0.5); }
   else if (kind === 'strike') noise(0.15, 3000, 1, 0.6);
   else if (kind === 'snap') tone(1800, 300, 0.12, 0.35, 'square');
-  else if (kind === 'landed') { tone(520, 780, 0.18, 0.2, 'triangle'); setTimeout(() => sfx('splash', 0.4), 80); }
+  else if (kind === 'landed') { const r = k || 0; [523, 659, 784, 1046, 1318].slice(0, 2 + r).forEach((f, i) => setTimeout(() => { const t2 = C.currentTime, o = C.createOscillator(), gg = C.createGain(); o.type = 'triangle'; o.frequency.value = f; o.connect(gg); gg.connect(AU.master); gg.gain.setValueAtTime(0.18, t2); gg.gain.exponentialRampToValueAtTime(0.001, t2 + 0.35); o.start(t2); o.stop(t2 + 0.4); }, i * 90)); setTimeout(() => sfx('splash', 0.6), 40); }
+  else if (kind === 'level') { [660, 880, 1320].forEach((f, i) => setTimeout(() => { const t2 = C.currentTime, o = C.createOscillator(), gg = C.createGain(); o.type = 'square'; o.frequency.value = f; o.connect(gg); gg.connect(AU.master); gg.gain.setValueAtTime(0.06, t2); gg.gain.exponentialRampToValueAtTime(0.001, t2 + 0.2); o.start(t2); o.stop(t2 + 0.22); }, i * 70)); }
+  else if (kind === 'legend') { tone(70, 50, 1.6, 0.5, 'sine'); tone(105, 80, 1.6, 0.25, 'triangle'); }
   else if (kind === 'click') tone(1400, 1200, 0.03, 0.12, 'square');
   else if (kind === 'gull') { const o = C.createOscillator(); o.type = 'sawtooth'; const f = C.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 1800; f.Q.value = 3; o.connect(f); f.connect(g); o.frequency.setValueAtTime(1700, t); o.frequency.linearRampToValueAtTime(2400, t + 0.12); o.frequency.linearRampToValueAtTime(1500, t + 0.3); g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.06, t + 0.04); g.gain.exponentialRampToValueAtTime(0.001, t + 0.32); o.start(t); o.stop(t + 0.35); }
 }

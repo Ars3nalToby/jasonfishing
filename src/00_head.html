@@ -101,7 +101,7 @@ body.catching #cross { display: none; }
   .scorebox { top: auto; bottom: calc(var(--gb) + 128px); }
   #flash { font-size: 44px; }
 }
-@media (max-width: 640px) and (pointer: coarse) { .tools { bottom: auto; top: calc(var(--gt) + 140px); } .scorebox { top: calc(var(--gt) + 140px); bottom: auto; right: auto; left: var(--gl); } #hint { top: auto; bottom: calc(var(--gb) + 236px); } #toasts { top: calc(var(--gt) + 190px); } }
+
 
 /* panels */
 .panel { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: var(--gt) var(--gr) var(--gb) var(--gl); background: rgba(4, 14, 20, 0.45); }
@@ -176,6 +176,93 @@ body.catching #cross { display: none; }
 #loader .bar i { display: block; height: 100%; width: 0; background: var(--float); transition: width .2s; }
 #fallback { position: fixed; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; color: var(--muted); }
 @media (prefers-reduced-motion: reduce) { #flash.go { animation-duration: .01s; } .meter.danger, #bAct.hot { animation: none; } .spot { transition: none; } }
+/* progression HUD */
+.scorebox { align-items: center; }
+.lv { position: relative; padding-bottom: 5px; }
+#xpbar { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; border-radius: 2px; background: rgba(255,255,255,.15); overflow: hidden; }
+#xpbar::after { content: ''; position: absolute; inset: 0; width: calc(var(--v, 0) * 100%); background: var(--buoy); }
+.chipbtn { position: absolute; right: var(--gr); top: calc(var(--gt) + 98px); appearance: none; border: 1px solid var(--line); background: var(--glass); color: var(--ink); font: 600 12px var(--body); padding: 7px 11px; border-radius: 10px; cursor: pointer; backdrop-filter: blur(10px); }
+.chipbtn i, #cond i { font-style: normal; }
+.chipbtn i { font: 600 10px var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0 4px 0 8px; }
+.chipbtn i:first-child { margin-left: 0; }
+#quests { position: absolute; right: var(--gr); top: calc(var(--gt) + 140px); width: 250px; background: var(--glass); border: 1px solid var(--line); border-radius: 12px; backdrop-filter: blur(10px); overflow: hidden; }
+#quests .qh { width: 100%; display: flex; justify-content: space-between; appearance: none; border: 0; background: transparent; color: var(--ink); font: 700 12px var(--body); letter-spacing: .08em; text-transform: uppercase; padding: 9px 12px; cursor: pointer; }
+#quests .qh b { color: var(--buoy); }
+#quests ol { margin: 0; padding: 0 12px 10px; list-style: none; display: grid; gap: 6px; }
+#quests.min ol { display: none; }
+#quests li { display: flex; flex-direction: column; gap: 1px; font: 500 12px/1.3 var(--body); }
+#quests li i { font: 500 11px var(--mono); font-style: normal; color: var(--muted); }
+#quests li.done span { text-decoration: line-through; color: var(--muted); } #quests li.done i { color: var(--ok); }
+body.coaching #hint { display: none; }
+body.moving #coach, body.fighting #bUse { display: none; }
+@media (min-width: 700px) { body.catching #toasts { left: calc(50% + 120px); } }
+#coach { position: absolute; left: 50%; bottom: calc(var(--gb) + 96px); transform: translateX(-50%); max-width: min(440px, calc(100vw - 32px)); padding: 12px 16px; border-radius: 12px; background: var(--sign); border: 1px solid rgba(255,255,255,.25); font: 600 15px/1.4 var(--body); text-align: center; pointer-events: none; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+#coach i { display: block; font: 700 11px var(--body); font-style: normal; letter-spacing: .14em; color: var(--buoy); margin-bottom: 3px; }
+body.catching #coach { display: none; }
+/* fight prompts */
+.move { position: absolute; left: 50%; top: 24%; transform: translateX(-50%); text-align: center; pointer-events: none; text-shadow: 0 2px 14px rgba(0,0,0,.6); }
+.move b { display: block; font: 800 46px/1 var(--display); letter-spacing: .04em; text-transform: uppercase; }
+.move span { display: block; margin-top: 4px; font: 700 16px var(--body); }
+.m-jump b { color: var(--buoy); animation: pulse .25s infinite alternate; }
+.m-structure b { color: var(--float); } .m-dig b { color: #9fd8ff; }
+.sbar { display: block; width: 220px; height: 8px; margin: 10px auto 0; border-radius: 4px; background: rgba(0,0,0,.45); overflow: hidden; }
+.sbar u { display: block; height: 100%; width: 0; background: var(--ok); }
+#steer { position: absolute; left: 50%; top: 40%; transform: translateX(-50%); display: flex; gap: 90px; }
+#steer .btn { min-width: 96px; min-height: 64px; font: 800 16px var(--display); letter-spacing: .06em; text-transform: uppercase; background: var(--sign); touch-action: none; }
+.meter { height: 16px; }
+.meter.tension { background: linear-gradient(90deg, rgba(0,0,0,.45) 0 42%, rgba(87,214,141,.35) 42% 78%, rgba(255,107,90,.35) 78% 100%); }
+.meter.tension::before { width: 4px; left: calc(var(--v) * 100% - 2px); background: #fff; box-shadow: 0 0 10px #fff; border-radius: 2px; top: -4px; bottom: -4px; }
+.meter.tension.zone { border-color: var(--ok); box-shadow: 0 0 18px rgba(87,214,141,.6); }
+.meter.tension i { display: block; left: 0; top: auto; bottom: -9px; height: 4px; width: calc(var(--s, 1) * 100%); background: var(--buoy); border-radius: 2px; }
+.meter.power i { display: none; }
+/* catch banner + card tags */
+.banner { position: fixed; z-index: 36; left: 50%; top: 16%; transform: translateX(-50%); text-align: center; pointer-events: none; padding: 14px 28px 12px; border-radius: 14px; background: rgba(8,24,32,.82); border: 2px solid var(--rc, var(--line)); min-width: min(380px, calc(100vw - 32px)); }
+.banner.go { animation: bn 2.6s cubic-bezier(.2,1.4,.4,1) both; }
+@keyframes bn { 0% { opacity: 0; transform: translateX(-50%) scale(.6); } 12% { opacity: 1; transform: translateX(-50%) scale(1.05); } 20% { transform: translateX(-50%) scale(1); } 85% { opacity: 1; } 100% { opacity: 0; transform: translateX(-50%) translateY(-12px); } }
+.bk { font: 800 14px var(--body); letter-spacing: .24em; color: var(--rc, var(--buoy)); }
+.bn { font: 800 42px/1.05 var(--display); text-transform: uppercase; margin: 4px 0; }
+.bs { font: 700 18px var(--display); color: var(--buoy); letter-spacing: .1em; } .bs i, .stars i { color: rgba(255,255,255,.2); font-style: normal; }
+.r-common { --rc: #c7d3d6; } .r-uncommon { --rc: #57d68d; } .r-rare { --rc: #5fc8ff; } .r-epic { --rc: #c48bff; } .r-legendary { --rc: #ffb547; }
+.banner.r-legendary { box-shadow: 0 0 60px rgba(255,181,71,.5); }
+.tagrow { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+.rar { font: 800 11px var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--rc); border: 1px solid var(--rc); padding: 2px 8px; border-radius: 999px; }
+.stars { font: 700 16px var(--display); color: var(--buoy); letter-spacing: .08em; }
+.legend { font: 800 13px var(--body); letter-spacing: .12em; text-transform: uppercase; color: #ffb547; margin-top: 6px; }
+#confetti { position: fixed; inset: 0; pointer-events: none; z-index: 37; overflow: hidden; }
+#confetti i { position: absolute; top: -12px; width: 8px; height: 12px; border-radius: 2px; animation: cf 2.2s ease-in forwards; }
+@keyframes cf { to { transform: translate(var(--dx), 105vh) rotate(var(--r)); opacity: .9; } }
+/* shop */
+#shop h3 { margin: 16px 0 8px; font: 800 13px var(--body); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.shop { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 640px) { .shop { grid-template-columns: 1fr 1fr; } }
+.sc { border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.sc.eq { border-color: var(--buoy); background: rgba(255,210,58,.06); }
+.sc b { font: 700 18px var(--display); } .sc p { margin: 0; font: 400 12px/1.4 var(--body); color: #d5e3e5; } .sc small { font: 500 11px var(--body); color: var(--muted); }
+.sc .btn { margin-top: auto; }
+@media (max-width: 640px) {
+  .chipbtn { top: auto; bottom: calc(var(--gb) + 196px); }
+  #quests { top: auto; bottom: calc(var(--gb) + 240px); width: 210px; }
+  .move b { font-size: 34px; } .bn { font-size: 32px; }
+}
+#bMenu { display: none; }
+@media (max-width: 640px) {
+  #bMenu { display: block; position: absolute; right: var(--gr); top: calc(var(--gt) + 124px); }
+  .scorebox { top: calc(var(--gt) + 124px); bottom: auto; right: auto; left: var(--gl); padding: 6px 10px; gap: 10px; }
+  .scorebox b { font-size: 16px; }
+  #cond span:nth-child(5), #cond span:nth-child(6) { display: none; }
+  #src { font-size: 10px; }
+  .tools, .chipbtn, #quests { display: none; }
+  body.menu-open .tools { display: flex; position: absolute; top: calc(var(--gt) + 172px); bottom: auto; right: var(--gr); left: auto; flex-direction: column; align-items: stretch; width: 170px; }
+  body.menu-open .chipbtn { display: block; position: absolute; top: calc(var(--gt) + 172px); bottom: auto; left: var(--gl); right: auto; }
+  body.menu-open #quests { display: block; position: absolute; top: calc(var(--gt) + 214px); bottom: auto; left: var(--gl); right: auto; width: calc(100vw - 32px - 186px); min-width: 0; }
+  body.menu-open #quests ol { display: grid; }
+  #toasts { top: calc(var(--gt) + 172px); }
+  #coach { bottom: auto; top: calc(var(--gt) + 172px); }
+  body.menu-open #coach { display: none; }
+  .move { top: 34%; width: calc(100vw - 32px); }
+}
+@media (pointer: coarse) { .meter { bottom: calc(var(--gb) + 150px); } #hint { bottom: calc(var(--gb) + 200px) !important; top: auto !important; } #steer { top: 48%; } }
+@media (prefers-reduced-motion: reduce) { .banner.go { animation-duration: .01s; animation-delay: 0s; } #confetti i { display: none; } .m-jump b { animation: none; } }
 </style>
 <canvas id="c" aria-label="3D fishing game on the south-east Queensland coast"></canvas>
 <div id="cross"></div>
@@ -185,14 +272,21 @@ body.catching #cross { display: none; }
     <div id="cond"></div>
     <div id="src"></div>
   </div>
+  <button class="btn" id="bMenu" aria-expanded="false">Menu</button>
   <div class="tools">
     <button class="btn" id="bSpots">Spots</button>
     <button class="btn primary" id="bHire">Boat hire</button>
+    <button class="btn" id="bShop">Tackle</button>
     <button class="btn" id="bDex">Fishdex</button>
     <button class="btn" id="bTime">Time: now</button>
     <button class="btn" id="bSound">Sound on</button>
   </div>
-  <div class="scorebox"><span>Score<b id="score">0</b></span><span>Esky<b id="esky">0</b></span></div>
+  <div class="scorebox"><span id="lvlbox" class="lv">Lv<b id="lvl">1</b><i id="xpbar"></i></span><span>Coins<b id="score">0</b></span><span>Esky<b id="esky">0</b></span></div>
+  <button class="chipbtn" id="baitChip" aria-label="Bait and rod, open tackle shop"></button>
+  <div id="quests"></div>
+  <div id="coach" hidden></div>
+  <div id="move" hidden></div>
+  <div id="steer" hidden><button class="btn" id="stL">◀ Steer</button><button class="btn" id="stR">Steer ▶</button></div>
   <div id="hint"></div>
   <div id="useTip" hidden>E · take the hire tinnie</div>
   <div class="meter" id="meter" hidden><i></i></div>
@@ -207,6 +301,8 @@ body.catching #cross { display: none; }
 <div id="toasts" aria-live="polite"></div>
 <div id="flash"></div>
 <div id="catch" hidden></div>
+<div id="banner" hidden></div>
+<div id="confetti" aria-hidden="true"></div>
 
 <div class="panel" id="start" hidden>
   <div class="card">
@@ -216,10 +312,11 @@ body.catching #cross { display: none; }
       <p>Walk a real SEQ pier, cast a float, and fight bream, flathead, tailor and mulloway. Weather, wind and tide are live where the network allows. Every fish is checked against Queensland size and possession limits before it goes in the esky.</p>
     </div>
     <div id="spots"></div>
-    <p class="foot">Desktop: click to look · WASD walk · hold click or Space to cast and reel · F rod · E boat. Phone: stick to walk, drag to look, big button to cast. Places are stylised, not surveyed. Boat hire prices are advertised rates checked 15 Oct 2026.</p>
+    <p class="foot">You start at the end of the pier with the rod out. Desktop: click to look · WASD walk · hold click or Space to cast and reel · A/D steer a running fish · B swap bait · T tackle shop · E boat. Phone: stick to walk, drag to look, big button to cast. Places are stylised, not surveyed. Boat hire prices are advertised rates checked 15 Oct 2026.</p>
   </div>
 </div>
 <div class="panel" id="hire" hidden><div class="card"><button class="btn x">Close</button><div class="eyebrow">Boat hire</div><h2>Get out past the pier</h2><div id="hireBody"></div></div></div>
+<div class="panel" id="shop" hidden><div class="card"><button class="btn x">Close</button><div class="eyebrow">Bait &amp; tackle</div><h2>Rig up</h2><div id="shopBody"></div></div></div>
 <div class="panel" id="dex" hidden><div class="card"><button class="btn x">Close</button><div class="eyebrow">Fishdex</div><h2>What you have found</h2><div id="dexBody"></div></div></div>
 <div id="loader"><div class="box"><h1>Saltline</h1><p id="lmsg">Loading…</p><div class="bar"><i id="lbar"></i></div></div></div>
 <div id="fallback" hidden>This game needs WebGL, which this browser has switched off.</div>
